@@ -1,0 +1,1389 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>ChicLifts App Prototype</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=Jost:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* Layout: explanatory panel on the left (wide screens only), phone-sized app on the right.
+   The app is one scrolling screen with a bottom tab bar, full-page overlays for details and bottom sheets.
+   Look: plum, blush and rose gold on cream, a fine serif for display, soft cards, illustrated covers and logos. */
+:root{
+  --font-display:'Cormorant Garamond',Georgia,'Times New Roman',serif;
+  --font-body:'Jost',system-ui,-apple-system,'Segoe UI',sans-serif;
+  --page:#F0E4DD;
+  --app-bg:#FBF5F0;
+  --surface:#FFFFFF;
+  --ink:#3E1B28;
+  --ink-2:#74485A;
+  --line:#EBDAD3;
+  --primary:#5B2A3A;
+  --on-primary:#FBF5F0;
+  --blush:#F6E0DC;
+  --rose:#C98A7B;
+  --good:#2C6A4D;
+  --good-bg:#DDEBE2;
+  --hero-bg:#5B2A3A;
+  --hero-ink:#FBF5F0;
+  --hero-soft:#E8B4A6;
+  --bezel:#2B1820;
+  --shadow:rgba(60,20,34,.28);
+  --card-shadow:0 1px 2px rgba(91,42,58,.05),0 10px 26px -14px rgba(91,42,58,.22);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --page:#130A0E; --app-bg:#1E1217; --surface:#2A1A21; --ink:#F6E9E4; --ink-2:#D2B5B0; --line:#43303A;
+    --primary:#E8B4A6; --on-primary:#2A1019; --blush:#3D2631; --rose:#E8B4A6; --good:#8FD0AE; --good-bg:#1F3A2E;
+    --hero-bg:#341623; --bezel:#0A0508; --shadow:rgba(0,0,0,.6); --card-shadow:0 1px 0 rgba(255,255,255,.03);
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --page:#130A0E; --app-bg:#1E1217; --surface:#2A1A21; --ink:#F6E9E4; --ink-2:#D2B5B0; --line:#43303A;
+  --primary:#E8B4A6; --on-primary:#2A1019; --blush:#3D2631; --rose:#E8B4A6; --good:#8FD0AE; --good-bg:#1F3A2E;
+  --hero-bg:#341623; --bezel:#0A0508; --shadow:rgba(0,0,0,.6); --card-shadow:0 1px 0 rgba(255,255,255,.03);
+  color-scheme:dark;
+}
+
+*{box-sizing:border-box}
+body{
+  margin:0; background:var(--page); color:var(--ink); font-family:var(--font-body); font-size:15px; line-height:1.4;
+  padding-block:24px;
+  padding-left:max(16px,env(safe-area-inset-left,0px));
+  padding-right:max(16px,env(safe-area-inset-right,0px));
+}
+h1,h2,h3,h4,p,ul,ol,dl,dd{margin:0}
+ul,ol{padding:0;list-style:none}
+button{font:inherit;color:inherit;background:none;border:0;padding:0;text-align:left;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:transform .12s}
+button:active{transform:scale(.985)}
+button:focus-visible,input:focus-visible{outline:2px solid var(--primary);outline-offset:2px}
+svg.i{flex:none;display:block}
+
+.stage{display:flex;justify-content:center;align-items:center;gap:72px;min-height:calc(100vh - 48px)}
+
+/* explanatory panel */
+.panel{display:none;max-width:400px;flex-direction:column;gap:22px}
+@media (min-width:980px){.panel{display:flex}}
+.panel h2{font-family:var(--font-display);font-weight:600;font-size:56px;line-height:1}
+.panel h3{font-size:12px;letter-spacing:.14em;text-transform:uppercase;font-weight:500;color:var(--ink-2);margin-bottom:10px}
+.panel p,.panel li{color:var(--ink-2);font-size:15.5px;line-height:1.5}
+.panel .lead{color:var(--ink);font-size:17px}
+.panel ul{display:flex;flex-direction:column;gap:8px}
+.panel li{display:flex;gap:10px;align-items:flex-start}
+.panel li svg{margin-top:3px;color:var(--primary)}
+.who{display:grid;grid-template-columns:auto 1fr;gap:6px 16px;font-size:15px}
+.who dt{font-weight:600;color:var(--ink)}
+.who dd{color:var(--ink-2)}
+.panel .btn-quiet{align-self:flex-start;min-height:44px;padding:0 20px;border:1.5px solid var(--primary);border-radius:999px;color:var(--primary);font-weight:500}
+
+/* phone */
+.phone{position:relative;width:390px;height:min(840px,calc(100vh - 48px));background:var(--app-bg);border:10px solid var(--bezel);border-radius:50px;overflow:hidden;box-shadow:0 36px 70px -24px var(--shadow),0 0 0 1px var(--line);flex:none}
+@media (max-width:520px){
+  .stage{min-height:0}
+  .phone{width:100%;height:calc(100vh - 48px);border-width:0;border-radius:28px}
+}
+.app{position:absolute;inset:0;display:flex;flex-direction:column}
+.screen{flex:1;min-height:0;overflow-y:auto;overflow-x:hidden;padding:22px 20px 30px;scrollbar-width:thin}
+
+/* type */
+.eyebrow{font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;font-weight:500;color:var(--ink-2)}
+.title{font-family:var(--font-display);font-weight:600;font-size:38px;line-height:1.02;text-wrap:balance}
+.h2{font-family:var(--font-display);font-weight:600;font-size:27px;line-height:1.1}
+.ital{font-family:var(--font-display);font-style:italic;font-weight:500}
+.muted{color:var(--ink-2)}
+.small{font-size:13px}
+.sec-h{display:flex;justify-content:space-between;align-items:center;margin:32px 0 12px;gap:12px}
+.link{color:var(--primary);font-weight:500;font-size:14px;min-height:44px;display:inline-flex;align-items:center}
+
+/* buttons */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:50px;padding:0 24px;border-radius:999px;font-weight:600;font-size:15px;text-align:center;border:1.5px solid transparent}
+.btn.primary{background:var(--primary);color:var(--on-primary)}
+.btn.ghost{border-color:var(--primary);color:var(--primary)}
+.btn.inverse{background:var(--hero-ink);color:var(--hero-bg)}
+.btn.block{width:100%}
+.btn.sm{min-height:40px;padding:0 16px;font-size:14px}
+.btn[disabled]{opacity:.5;cursor:default}
+.iconbtn{width:44px;height:44px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;background:var(--surface);border:1px solid var(--line);flex:none}
+.iconbtn.glass{background:rgba(251,245,240,.92);color:#3E1B28;border-color:transparent;box-shadow:0 4px 14px rgba(40,10,20,.18)}
+.iconbtn[aria-pressed="true"]{color:var(--primary)}
+.iconbtn[aria-pressed="true"] svg{fill:currentColor}
+
+/* chips, pills */
+.chips{display:flex;gap:8px;overflow-x:auto;margin-inline:-20px;padding:2px 20px 4px;scrollbar-width:none}
+.chip{flex:none;min-height:40px;padding:0 16px;border-radius:999px;border:1.5px solid var(--line);background:var(--surface);font-weight:500;font-size:14px;display:inline-flex;align-items:center;gap:6px}
+.chip[aria-pressed="true"]{background:var(--primary);color:var(--on-primary);border-color:var(--primary)}
+.pill{display:inline-flex;align-items:center;gap:4px;min-height:24px;padding:2px 10px;border-radius:999px;font-size:12px;font-weight:500;background:var(--blush);color:var(--ink)}
+.pill.line{background:transparent;border:1px solid var(--line);color:var(--ink-2)}
+.pill.good{background:var(--good-bg);color:var(--good)}
+.pill.solid{background:var(--primary);color:var(--on-primary)}
+.tags{display:flex;flex-wrap:wrap;gap:6px}
+
+/* logos and avatars */
+.lg{display:inline-flex;flex:none;overflow:hidden}
+.lg svg{width:100%;height:100%;display:block}
+.av{display:inline-flex;flex:none;border-radius:50%;overflow:hidden}
+.av svg{width:100%;height:100%;display:block}
+.ringav{display:inline-flex;flex:none;padding:3px;border-radius:50%;border:2px solid var(--rose)}
+.stack{display:flex}
+.stack>*{margin-left:-10px;border:2px solid var(--surface);border-radius:28%}
+.stack>*:first-child{margin-left:0}
+
+/* covers */
+.cover{display:block;width:100%;height:100%;overflow:hidden}
+.cover svg{width:100%;height:100%;display:block}
+
+/* cards and rows */
+.card{display:flex;gap:14px;padding:14px;border-radius:22px;background:var(--surface);border:1px solid var(--line);width:100%;box-shadow:var(--card-shadow)}
+.ev-main{display:flex;flex-direction:column;gap:4px;min-width:0;flex:1}
+.ev-title{font-weight:600;font-size:16px;line-height:1.25}
+.ev-sub{color:var(--ink-2);font-size:13.5px}
+.ev-date{font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;font-weight:500;color:var(--primary)}
+.list{display:flex;flex-direction:column;gap:14px}
+.evc{position:relative}
+.evc>.card{padding:12px;align-items:stretch}
+.thumb{position:relative;width:96px;height:118px;flex:none;align-self:flex-start;border-radius:16px;overflow:hidden}
+.thumb .hostlogo{position:absolute;left:6px;bottom:6px;border-radius:12px;box-shadow:0 2px 8px rgba(40,10,20,.25)}
+.save{position:absolute;right:10px;top:10px;width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--ink-2)}
+.save[aria-pressed="true"]{color:var(--primary)}
+.save[aria-pressed="true"] svg{fill:currentColor}
+.scroller{display:flex;gap:14px;overflow-x:auto;margin-inline:-20px;padding:2px 20px 10px;scroll-snap-type:x proximity;scroll-padding-inline:20px;scrollbar-width:none}
+.scroller>*{flex:none;scroll-snap-align:start}
+.mini{width:236px;flex-direction:column;gap:0;padding:0;overflow:hidden}
+.mini .mcov{position:relative;height:128px}
+.mini .mcov .hostlogo{position:absolute;left:10px;bottom:-16px;border-radius:14px;box-shadow:0 4px 12px rgba(40,10,20,.25);border:2px solid var(--surface)}
+.mini .mbody{padding:24px 14px 14px;display:flex;flex-direction:column;gap:6px}
+.cr{display:flex;flex-direction:column;align-items:center;gap:8px;width:92px;text-align:center}
+.cr b{font-size:13.5px;font-weight:600;line-height:1.2}
+.cr span.f{font-size:12px;color:var(--ink-2)}
+.coachmini{width:172px;flex-direction:column;align-items:flex-start;gap:10px}
+
+/* home */
+.hdr{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:22px}
+.pinchip{display:inline-flex;align-items:center;gap:4px;color:var(--ink-2);font-size:13px;font-weight:500;margin-bottom:6px}
+.markbox{width:48px;height:48px;border-radius:16px;background:var(--blush);color:var(--primary);display:flex;align-items:center;justify-content:center;flex:none}
+.feat{border-radius:28px;background:var(--surface);border:1px solid var(--line);overflow:hidden;box-shadow:var(--card-shadow)}
+.feat-media{position:relative;height:196px;display:block;width:100%}
+.feat-media .pill{position:absolute;left:14px;top:14px;box-shadow:0 2px 8px rgba(40,10,20,.2);background:var(--surface)}
+.feat-body{padding:18px 18px 18px;display:flex;flex-direction:column;gap:10px}
+.feat-host{display:flex;align-items:center;gap:10px}
+.promise{display:flex;gap:14px;padding:18px;border-radius:24px;background:var(--blush);margin-top:32px}
+.promise svg{color:var(--primary);margin-top:2px}
+.prog{display:flex;gap:14px;align-items:center;padding:16px;border-radius:24px;background:var(--surface);border:1px solid var(--line);width:100%;box-shadow:var(--card-shadow);flex-direction:column;align-items:stretch}
+.prog-top{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.bar{height:10px;border-radius:10px;background:var(--line);overflow:hidden}
+.bar>span{display:block;height:100%;background:var(--primary);border-radius:10px}
+
+/* overlays */
+.overlay{position:absolute;inset:0;background:var(--app-bg);z-index:5;display:flex;flex-direction:column}
+.ov-top{display:flex;align-items:center;gap:12px;padding:16px 20px 8px}
+.ov-scroll{flex:1;min-height:0;overflow-y:auto;padding:8px 20px 24px;display:flex;flex-direction:column;gap:22px}
+.ov-scroll.flush{padding:0;gap:0}
+.ov-cover{position:relative;height:230px;flex:none}
+.ov-cover-bar{position:absolute;left:16px;right:16px;top:16px;display:flex;justify-content:space-between}
+.ov-body{padding:22px 20px 26px;display:flex;flex-direction:column;gap:22px;background:var(--app-bg);margin-top:-26px;position:relative;border-radius:28px 28px 0 0}
+.ov-bar{display:flex;align-items:center;gap:10px;padding:12px 20px 16px;border-top:1px solid var(--line);background:var(--surface)}
+.hostrow{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:18px;background:var(--surface);border:1px solid var(--line);width:100%;min-height:60px}
+.hostrow .tx{display:flex;flex-direction:column;flex:1;min-width:0}
+.hostrow .tx small{font-size:12px;color:var(--ink-2)}
+.hostrow .tx b{font-size:15px;font-weight:600}
+.facts{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.fact{padding:12px 14px;border-radius:18px;background:var(--surface);border:1px solid var(--line);display:flex;flex-direction:column;gap:2px;min-width:0}
+.fact dt{font-size:11.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-2);font-weight:500}
+.fact dd{font-weight:500;font-size:14.5px}
+.checks{display:flex;flex-direction:column;gap:10px}
+.checks li{display:flex;gap:10px;align-items:flex-start}
+.checks svg{color:var(--primary);margin-top:2px}
+.safe{display:flex;gap:12px;padding:14px 16px;border-radius:20px;background:var(--good-bg);color:var(--good);align-items:flex-start}
+.safe p{color:var(--ink);font-size:14px}
+.safe svg{margin-top:2px}
+.perk{display:flex;gap:14px;align-items:center;padding:14px;border-radius:22px;background:var(--blush)}
+.perk b{display:block;font-size:15px}
+.disclose{font-size:12.5px;color:var(--ink-2);display:flex;gap:6px;align-items:flex-start}
+.demo{padding:16px;border-radius:22px;border:1.5px dashed var(--rose);display:flex;flex-direction:column;gap:10px}
+.stars{display:flex;gap:2px}
+.stars button{width:44px;height:44px;display:flex;align-items:center;justify-content:center;color:var(--rose)}
+.stars button[aria-pressed="true"] svg{fill:currentColor}
+.hostband{position:relative;height:150px;flex:none;z-index:2}
+.hostlogo-lg{position:absolute;left:20px;bottom:-34px;border-radius:26px;border:3px solid var(--app-bg);box-shadow:0 6px 18px rgba(40,10,20,.22)}
+.hostlogo-lg.round{border-radius:50%}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.stat{padding:14px 8px;border-radius:20px;background:var(--surface);border:1px solid var(--line);text-align:center;box-shadow:var(--card-shadow)}
+.stat b{display:block;font-family:var(--font-display);font-size:30px;line-height:1;font-weight:700;font-variant-numeric:tabular-nums}
+.stat span{font-size:12px;color:var(--ink-2)}
+
+/* sheet, toast */
+.scrim{position:absolute;inset:0;background:rgba(30,10,18,.5);z-index:8;border:0;width:100%;cursor:default}
+.sheet{position:absolute;left:0;right:0;bottom:0;max-height:86%;overflow-y:auto;background:var(--surface);border-radius:30px 30px 0 0;padding:12px 22px 26px;z-index:9;display:flex;flex-direction:column;gap:16px}
+.grab{width:40px;height:4px;border-radius:4px;background:var(--line);margin:0 auto 4px}
+.sheet-head{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.toast{position:absolute;left:20px;right:20px;bottom:96px;z-index:20;background:var(--primary);color:var(--on-primary);padding:12px 16px;border-radius:16px;font-size:14px;font-weight:500;opacity:0;transform:translateY(8px);pointer-events:none;transition:opacity .2s,transform .2s}
+.toast.show{opacity:1;transform:none}
+.fld{display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:500;color:var(--ink-2)}
+.inp{min-height:50px;padding:0 16px;border-radius:16px;border:1.5px solid var(--line);background:var(--app-bg);color:var(--ink);font:inherit;font-size:15px;width:100%}
+.inp::placeholder{color:var(--ink-2);opacity:.7}
+
+/* tab bar */
+.tabbar{display:flex;padding:6px 8px 10px;background:var(--surface);border-top:1px solid var(--line)}
+.tab{flex:1;min-width:0;min-height:54px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font-size:10.5px;color:var(--ink-2);border-radius:14px;text-align:center}
+.tab .ico{width:44px;height:28px;border-radius:14px;display:flex;align-items:center;justify-content:center}
+.tab[aria-current="page"]{color:var(--primary);font-weight:600}
+.tab[aria-current="page"] .ico{background:var(--blush)}
+
+/* welcome + quiz */
+.welcome{position:relative;flex:1;background:var(--hero-bg);color:var(--hero-ink);padding:56px 28px 28px;display:flex;flex-direction:column;justify-content:space-between;overflow:hidden;--rose:var(--hero-soft)}
+.welcome .deco{position:absolute;right:-90px;top:-70px;width:340px;height:340px;opacity:.9;pointer-events:none}
+.welcome>*{position:relative}
+.welcome .brand{font-family:var(--font-display);font-weight:600;font-size:64px;line-height:1;margin-top:20px}
+.welcome .tag{font-family:var(--font-display);font-style:italic;font-size:28px;font-weight:500;line-height:1.15;margin-top:10px;color:var(--hero-soft)}
+.welcome ul{display:flex;flex-direction:column;gap:14px;margin-top:30px}
+.welcome li{display:flex;gap:12px;align-items:flex-start;font-size:15.5px}
+.welcome li svg{color:var(--hero-soft);margin-top:2px}
+.welcome .fine{text-align:center;font-size:12.5px;margin-top:12px;color:var(--hero-soft)}
+.logorow{display:flex;gap:8px;align-items:center;margin:0 0 16px}
+.logorow .lg{border-radius:12px;box-shadow:0 0 0 1.5px rgba(251,245,240,.4)}
+.logorow span{font-size:12.5px;color:var(--hero-soft);margin-left:4px}
+.quiz{flex:1;display:flex;flex-direction:column;padding:20px 20px 24px;gap:18px;min-height:0}
+.quiz-top{display:flex;align-items:center;justify-content:space-between;gap:10px;min-height:44px}
+.dots{display:flex;gap:6px}
+.dots span{width:26px;height:4px;border-radius:4px;background:var(--line)}
+.dots span.on{background:var(--primary)}
+.opts{display:flex;flex-direction:column;gap:10px;flex:1;overflow-y:auto;padding-bottom:4px}
+.opt{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:58px;padding:12px 18px;border-radius:20px;border:1.5px solid var(--line);background:var(--surface);width:100%;font-weight:500;font-size:16px}
+.opt[aria-pressed="true"]{border-color:var(--primary);background:var(--blush)}
+.opt svg{color:var(--primary);opacity:0}
+.opt[aria-pressed="true"] svg{opacity:1}
+
+/* challenge */
+.ringwrap{position:relative;width:176px;height:176px;margin:6px auto 0}
+.ringwrap .mid{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.ringwrap b{font-family:var(--font-display);font-size:48px;line-height:1;font-weight:700;font-variant-numeric:tabular-nums}
+.reward{display:flex;gap:14px;align-items:center;padding:12px 14px;border-radius:22px;background:var(--surface);border:1px solid var(--line);width:100%;box-shadow:var(--card-shadow)}
+.reward.locked .lg{filter:grayscale(.85);opacity:.6}
+.code{font-family:var(--font-display);font-weight:700;font-size:30px;letter-spacing:.08em;text-align:center;padding:18px;border-radius:20px;background:var(--blush)}
+.kmgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+
+/* profile + dashboard */
+.row{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:58px;padding:0 4px;border-bottom:1px solid var(--line);width:100%}
+.row .l{display:flex;align-items:center;gap:12px}
+.row svg{color:var(--primary)}
+.bars{display:flex;align-items:flex-end;gap:10px;height:150px;padding-top:8px}
+.bars div{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:6px;height:100%}
+.bars i{display:block;width:100%;border-radius:10px 10px 4px 4px;background:var(--primary)}
+.bars b{font-size:13px;font-variant-numeric:tabular-nums}
+.bars span{font-size:11.5px;color:var(--ink-2)}
+.plan{display:flex;flex-direction:column;gap:8px;padding:16px;border-radius:22px;border:1px solid var(--line);background:var(--surface)}
+.plan.feat2{border:1.5px solid var(--primary)}
+
+
+/* venues, gallery, map */
+.gal{gap:12px;margin-top:0}
+.shot{margin:0;width:250px;display:flex;flex-direction:column;gap:6px}
+.shotimg{display:block;height:150px;border-radius:18px;overflow:hidden;border:1px solid var(--line)}
+.shot figcaption{font-size:12.5px;color:var(--ink-2);padding-left:2px}
+.venue{display:flex;flex-direction:column;border-radius:22px;overflow:hidden;background:var(--surface);border:1px solid var(--line);margin-top:6px;box-shadow:var(--card-shadow)}
+.mapcard{height:120px;background:#F2E6DF}
+.mapcard svg{width:100%;height:100%;display:block}
+.venue-body{padding:14px;display:flex;flex-direction:column;gap:8px;align-items:flex-start}
+.venue-body b{font-size:16px}
+.vline{display:flex;align-items:center;gap:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+/* strava */
+.sbadge{width:46px;height:46px;border-radius:14px;background:#FC4C02;color:#fff;display:inline-flex;align-items:center;justify-content:center;flex:none}
+.act{display:flex;gap:12px;align-items:center;padding:12px 14px;border-radius:18px;background:var(--app-bg);border:1px solid var(--line)}
+.act .ai{width:40px;height:40px;border-radius:12px;background:var(--blush);color:var(--primary);display:flex;align-items:center;justify-content:center;flex:none}
+.act.skipped{opacity:.7}
+.revstars{display:flex;gap:2px;color:var(--rose)}
+.revstars svg{fill:currentColor}
+
+/* shop */
+.pgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.prodw{position:relative}
+.prod{display:flex;flex-direction:column;border-radius:20px;overflow:hidden;background:var(--surface);border:1px solid var(--line);box-shadow:var(--card-shadow);width:100%;height:100%}
+.prod .pimg{display:block;height:150px;width:100%}
+.prod .pbody{padding:10px 12px 12px;display:flex;flex-direction:column;gap:3px}
+.prod .pn{font-weight:600;font-size:14px;line-height:1.25}
+.pprice{display:flex;gap:6px;align-items:baseline;flex-wrap:wrap;font-weight:600}
+.pprice s{color:var(--ink-2);font-weight:400;font-size:13px}
+.prodw .ptag{position:absolute;left:8px;top:8px;background:var(--surface);box-shadow:0 2px 6px rgba(40,10,20,.15)}
+.psave{position:absolute;right:6px;top:6px;width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#3E1B28}
+.psave svg{background:rgba(251,245,240,.92);border-radius:50%;padding:5px;box-sizing:content-box;width:20px;height:20px}
+.psave[aria-pressed="true"]{color:var(--primary)}
+.psave[aria-pressed="true"] svg{fill:currentColor}
+.brandcard{width:210px;flex-direction:column;align-items:flex-start;gap:10px}
+.swatches{display:flex;gap:14px}
+.sw{width:40px;height:40px;border-radius:50%;border:2px solid var(--surface);box-shadow:0 0 0 1px var(--line)}
+.sw[aria-pressed="true"]{box-shadow:0 0 0 2.5px var(--primary)}
+.sizes{display:flex;flex-wrap:wrap;gap:8px}
+.sizes .chip{min-width:48px;justify-content:center;padding:0 12px}
+
+@media (prefers-reduced-motion:reduce){.toast,button{transition:none}}
+</style>
+
+<main class="stage">
+  <aside class="panel" aria-label="About this prototype">
+    <div>
+      <p class="eyebrow">Interactive prototype</p>
+      <h2>ChicLifts</h2>
+    </div>
+    <p class="lead">A women-only place to start moving: events from clubs, creators and brands, coaches who welcome beginners, and challenges with rewards from local businesses.</p>
+    <div>
+      <h3>Try this</h3>
+      <ul>
+        <li><svg class="i" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Answer the three start questions to get a first step picked for you.</li>
+        <li><svg class="i" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Join an event, then use the demo check-in to earn kilometers and a brand perk.</li>
+        <li><svg class="i" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Tap any club, creator or brand to see its profile.</li>
+        <li><svg class="i" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Open Profile, then Partner view, to see what a host sees and create an event.</li>
+        <li><svg class="i" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Open Challenges and connect Strava, then tap Sync now to watch your steps count toward rewards.</li>
+        <li><svg class="i" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Open any event or coach to see where it happens, then browse the Shop for new sports brands and member discounts.</li>
+      </ul>
+    </div>
+    <div>
+      <h3>Who gets what</h3>
+      <dl class="who">
+        <dt>Members</dt><dd>Free to join and use</dd>
+        <dt>Clubs and creators</dt><dd>Visibility and sign-ups</dd>
+        <dt>Coaches</dt><dd>Clients who are ready to start</dd>
+        <dt>Brands</dt><dd>Sponsor events, rewards and the shop</dd>
+      </dl>
+    </div>
+    <p class="small">All brands, creators, numbers and codes are invented sample data, with original logos. Launch market: United States, with a Spanish version planned.</p>
+    <button class="btn-quiet" data-act="reset">Restart demo</button>
+  </aside>
+
+  <div class="phone" role="application" aria-label="ChicLifts app preview">
+    <div class="app" id="app"></div>
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  </div>
+</main>
+
+<script>
+(function(){
+'use strict';
+
+/* ---------- icons ---------- */
+var ICONS = {
+  home:'<path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/>',
+  cal:'<rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/>',
+  coach:'<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c0-3.6 2.9-6 6.5-6s6.5 2.4 6.5 6"/><circle cx="17.5" cy="9" r="2.5"/><path d="M17 14.2c2.6.3 4.5 2.2 4.5 5.3"/>',
+  trophy:'<path d="M7 4h10v5a5 5 0 0 1-10 0z"/><path d="M7 6H4v1.5A3.5 3.5 0 0 0 7.5 11M17 6h3v1.5A3.5 3.5 0 0 1 16.5 11M12 14v4M8 21h8M9 18h6"/>',
+  user:'<circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-7 8-7s8 2.6 8 7"/>',
+  back:'<path d="M15 5l-7 7 7 7"/>',
+  pin:'<path d="M12 21s7-6.2 7-11.5A7 7 0 0 0 5 9.5C5 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/>',
+  clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+  check:'<path d="M5 12.5l4.5 4.5L19 7.5"/>',
+  shield:'<path d="M12 3l8 3v6c0 4.5-3.2 8-8 9-4.8-1-8-4.5-8-9V6z"/><path d="M8.5 12l2.5 2.5L16 9.5"/>',
+  lock:'<rect x="5" y="11" width="14" height="10" rx="3"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/>',
+  gift:'<rect x="3" y="9" width="18" height="12" rx="2"/><path d="M12 9v12M3 13h18M12 9c-2-4-6-3-5 0M12 9c2-4 6-3 5 0"/>',
+  copy:'<rect x="9" y="9" width="11" height="11" rx="2.5"/><path d="M5 15V6.5A2.5 2.5 0 0 1 7.5 4H15"/>',
+  plus:'<path d="M12 5v14M5 12h14"/>',
+  chev:'<path d="M9 5l7 7-7 7"/>',
+  close:'<path d="M6 6l12 12M18 6L6 18"/>',
+  bars:'<path d="M5 20V10M12 20V4M19 20v-7"/>',
+  globe:'<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18"/>',
+  flag:'<path d="M5 21V4M5 4h11l-2 4 2 4H5"/>',
+  send:'<path d="M21 3 10 14M21 3l-7 18-4-7-7-4z"/>',
+  redo:'<path d="M3 12a9 9 0 1 0 3-6.7M3 4v5h5"/>',
+  mark:'<path d="M12 21s-7-4.4-7-10a4 4 0 0 1 7-2.5A4 4 0 0 1 19 11c0 5.6-7 10-7 10z"/>',
+  star:'<path d="M12 3.5l2.7 5.6 6.1.8-4.5 4.2 1.1 6-5.4-3-5.4 3 1.1-6L3.2 9.9l6.1-.8z"/>',
+  bookmark:'<path d="M6 4h12v17l-6-4-6 4z"/>',
+  tag:'<path d="M3 12V4h8l10 10-8 8z"/><circle cx="7.5" cy="8.5" r="1.3"/>',
+  user2:'<circle cx="12" cy="9" r="3.5"/><path d="M5 20c0-3.6 3-6 7-6s7 2.4 7 6"/>',
+  bag:'<path d="M5 8h14l-1 12H6z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/>',
+  route:'<circle cx="6" cy="18" r="2.5"/><circle cx="18" cy="6" r="2.5"/><path d="M8.5 18H15a3.5 3.5 0 0 0 0-7H9a3.5 3.5 0 0 1 0-7h6.5"/>',
+  sync:'<path d="M20 11a8 8 0 0 0-14-4M4 4v4h4M4 13a8 8 0 0 0 14 4M20 20v-4h-4"/>',
+  map:'<path d="M9 4 3 6v14l6-2 6 2 6-2V4l-6 2z"/><path d="M9 4v14M15 6v14"/>',
+  run:'<circle cx="14" cy="4.5" r="2"/><path d="M8 21l3-6 3 2 1 4M11 15l-1-5 4-2 3 4h3M10 10l-3 2"/>'
+};
+function icon(n,s){ s=s||22; return '<svg class="i" width="'+s+'" height="'+s+'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+ICONS[n]+'</svg>'; }
+function mark(s){
+  return '<svg width="'+s+'" height="'+s+'" viewBox="0 0 120 120" role="img" aria-label="ChicLifts logo"><g transform="translate(-5 0)">'+
+  '<path d="M87.6 36.9 A36 36 0 1 0 87.6 83.1" fill="none" stroke="currentColor" stroke-width="7" stroke-linecap="round"/>'+
+  '<line x1="60" y1="60" x2="97" y2="60" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"/>'+
+  '<rect x="94" y="40" width="7" height="40" rx="3.5" style="fill:var(--rose)"/>'+
+  '<rect x="104" y="47" width="5.5" height="26" rx="2.75" style="fill:var(--rose)"/>'+
+  '<circle cx="60" cy="60" r="5" style="fill:var(--rose)"/></g></svg>';
+}
+
+/* ---------- brands (invented, with original logo marks) ---------- */
+var GLYPH = {
+  lace:function(f,b){return '<g fill="none" stroke="'+f+'" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M24 26C15 27 10 17 15.5 14C21 11 24 19 24 26C24 19 27 11 32.5 14C38 17 33 27 24 26Z"/><path d="M24 26L19.5 37M24 26L28.5 37"/></g>';},
+  iron:function(f,b){return '<g fill="none" stroke="'+f+'" stroke-width="2.4"><ellipse cx="24" cy="24" rx="5.5" ry="13" transform="rotate(45 24 24)"/><ellipse cx="24" cy="24" rx="5.5" ry="13" transform="rotate(-45 24 24)"/></g><circle cx="24" cy="24" r="3" fill="'+f+'"/>';},
+  soft:function(f,b){return '<g fill="'+f+'"><rect x="8" y="17" width="5" height="14" rx="2.5"/><rect x="35" y="17" width="5" height="14" rx="2.5"/><rect x="13" y="21" width="22" height="6" rx="3"/></g>';},
+  sun:function(f,b){return '<path d="M12 31A12 12 0 0 1 36 31Z" fill="'+f+'"/><g stroke="'+f+'" stroke-width="2.6" stroke-linecap="round"><path d="M24 11V15M12.5 16L15.3 18.8M35.5 16L32.7 18.8M7 28H10M38 28H41M9 36H39"/></g>';},
+  glow:function(f,b){return '<g fill="none" stroke="'+f+'" stroke-width="2.4"><circle cx="24" cy="24" r="5"/><circle cx="24" cy="24" r="10"/><circle cx="24" cy="24" r="15" opacity=".55"/></g>';},
+  muse:function(f,b){return '<path d="M12 35C11 21 21 11 37 11C37 27 28 37 12 35Z" fill="'+f+'"/><path d="M14 33C20 26 26 21 32 16" stroke="'+b+'" stroke-width="2" stroke-linecap="round" fill="none"/>';},
+  soleil:function(f,b){return '<path d="M31 11A14 14 0 1 0 31 37A11 11 0 1 1 31 11Z" fill="'+f+'"/>';},
+  petal:function(f,b){return '<path d="M24 9C30 18 35 23 35 29A11 11 0 0 1 13 29C13 23 18 18 24 9Z" fill="'+f+'"/><path d="M19 30A5 5 0 0 0 24 35" stroke="'+b+'" stroke-width="2" stroke-linecap="round" fill="none"/>';},
+  luna:function(f,b){return '<path d="M29 12A13 13 0 1 0 36 31A10.5 10.5 0 0 1 29 12Z" fill="'+f+'"/><circle cx="35" cy="14" r="2" fill="'+f+'"/>';},
+  bloom:function(f,b){return '<g fill="'+f+'" opacity=".92"><circle cx="24" cy="16" r="5.5"/><circle cx="16.4" cy="21.5" r="5.5"/><circle cx="19.3" cy="30.5" r="5.5"/><circle cx="28.7" cy="30.5" r="5.5"/><circle cx="31.6" cy="21.5" r="5.5"/></g><circle cx="24" cy="24" r="3.5" fill="'+b+'"/>';},
+  oat:function(f,b){return '<g fill="none" stroke="'+f+'" stroke-width="2.4" stroke-linejoin="round"><path d="M24 10L35 16.5V29.5L24 36L13 29.5V16.5Z"/></g><path d="M24 18L29 21V27L24 30L19 27V21Z" fill="'+f+'"/>';},
+  tide:function(f,b){return '<g fill="none" stroke="'+f+'" stroke-width="2.6" stroke-linecap="round"><path d="M8 17q4-5 8 0t8 0t8 0t8 0"/><path d="M8 25q4-5 8 0t8 0t8 0t8 0"/><path d="M8 33q4-5 8 0t8 0t8 0t8 0"/></g>';},
+  flora:function(f,b){return '<g fill="'+f+'" opacity=".9"><ellipse cx="24" cy="24" rx="4.5" ry="12"/><ellipse cx="24" cy="24" rx="4.5" ry="12" transform="rotate(60 24 24)"/><ellipse cx="24" cy="24" rx="4.5" ry="12" transform="rotate(120 24 24)"/></g><circle cx="24" cy="24" r="3.4" fill="'+b+'"/>';},
+  stride:function(f,b){return '<path d="M9 31V22Q18 21 22 15L26 17Q28 24 36 26Q41 27 41 31Z" fill="'+f+'"/><rect x="9" y="32" width="32" height="4" rx="2" fill="'+f+'" opacity=".6"/>';},
+  halo:function(f,b){return '<circle cx="24" cy="26" r="12" fill="none" stroke="'+f+'" stroke-width="3.2"/><circle cx="24" cy="12" r="3.4" fill="'+f+'"/>';}
+};
+var B = {
+  lace:{n:'Lace Up Run Club',k:'Run club',bg:'#5B2A3A',fg:'#F6E0DC',g:'lace',members:'3.2K',rating:'4.9',about:'Beginner-first run groups every week. Run-walk is always welcome and nobody gets left behind.',code:'LACE'},
+  iron:{n:'Iron & Rose Hyrox Lab',k:'Hyrox studio',bg:'#C98A7B',fg:'#3E1B28',g:'iron',members:'1.8K',rating:'4.8',about:'A women-led Hyrox training studio. We teach every station before you ever time it.',code:'IRON'},
+  soft:{n:'Soft Strength Studio',k:'Strength studio',bg:'#E6CFDA',fg:'#5B2A3A',g:'soft',members:'2.4K',rating:'4.9',about:'Small-group strength and Pilates for women who never felt at home in a gym.',code:'SOFT'},
+  sun:{n:'Sunrise Social Fitness',k:'Social club',bg:'#F4D98B',fg:'#5B2A3A',g:'sun',members:'4.1K',rating:'4.8',about:'Morning movement and brunch. We organize the easiest way to meet new training friends.',code:'SUN'},
+  glow:{n:'Glow Pilates',k:'Pilates studio',bg:'#CFC6E8',fg:'#4A3A7A',g:'glow',members:'1.2K',rating:'4.9',about:'Boutique reformer and mat Pilates with a calm, welcoming atmosphere.',code:'GLOW'},
+  muse:{n:'Matcha Muse',k:'Brand · Café',bg:'#D5E3CF',fg:'#2F5A3E',g:'muse',members:'',rating:'',about:'A matcha bar for the post-workout ritual. Partners with ChicLifts on run rewards.',code:'MUSE'},
+  soleil:{n:'Soleil Activewear',k:'Brand · Activewear',bg:'#EBD3B8',fg:'#5A3A22',g:'soleil',members:'',rating:'',about:'Soft, supportive activewear designed by and for women. Sponsors events and challenge rewards.',code:'SOLEIL'},
+  petal:{n:'Petal Hydration',k:'Brand · Hydration',bg:'#CFE6EE',fg:'#2D5F73',g:'petal',members:'',rating:'',about:'Light electrolyte mixes with gentle flavors. Presents training runs in the community.',code:'PETAL'},
+  luna:{n:'Luna Recovery',k:'Brand · Recovery',bg:'#3B2A4F',fg:'#E8D9F5',g:'luna',members:'',rating:'',about:'Recovery sessions, stretching and sleep rituals for active women.',code:'LUNA'},
+  bloom:{n:'Bloom Protein',k:'Brand · Nutrition',bg:'#F6C9C0',fg:'#8A2F3E',g:'bloom',members:'',rating:'',about:'Plant-based protein and snacks with simple ingredients.',code:'BLOOM'},
+  oat:{n:'Oat & Honey Café',k:'Brand · Café',bg:'#F2DDA6',fg:'#6A4A12',g:'oat',members:'',rating:'',about:'Neighborhood brunch spot, popular with run clubs after the Sunday long run.',code:'OAT'},
+  tide:{n:'Tide & Thread',k:'Brand · Leggings',bg:'#CFE6EE',fg:'#2D5F73',g:'tide',members:'',rating:'',about:'Buttery leggings in sizes XXS to 4X, designed with women who lift, run and chase toddlers.',code:'TIDE'},
+  flora:{n:'Flora Sport',k:'Brand · Sports bras',bg:'#F6C9C0',fg:'#8A2F3E',g:'flora',members:'',rating:'',about:'Sports bras made to fit real bodies, with proper support in every size.',code:'FLORA'},
+  stride:{n:'Stride Studio',k:'Brand · Footwear',bg:'#3B2A4F',fg:'#E8D9F5',g:'stride',members:'',rating:'',about:'Trainers designed around the female foot, with a friendly first pair for new runners.',code:'STRIDE'},
+  halo:{n:'Halo Gear',k:'Brand · Accessories',bg:'#F2DDA6',fg:'#6A4A12',g:'halo',members:'',rating:'',about:'Bottles, bags and small gear for the busy woman who trains between everything else.',code:'HALO'}
+};
+function logo(id,s,rad){
+  var b = B[id];
+  return '<span class="lg" style="width:'+s+'px;height:'+s+'px;border-radius:'+(rad!=null?rad:Math.round(s*0.3))+'px"><svg viewBox="0 0 48 48" role="img" aria-label="'+b.n+' logo"><rect width="48" height="48" fill="'+b.bg+'"/>'+GLYPH[b.g](b.fg,b.bg)+'</svg></span>';
+}
+
+/* ---------- illustrated people ---------- */
+function person(a,s,ring){
+  var hairBack = '', hairFront = '';
+  if (a.style==='long'){ hairBack='<path d="M13 24C11 8 37 8 35 24C35 30 37 34 38 40L10 40C11 34 13 30 13 24Z" fill="'+a.hair+'"/>'; }
+  else if (a.style==='bob'){ hairBack='<path d="M13 25C12 9 36 9 35 25L35 33L13 33Z" fill="'+a.hair+'"/>'; }
+  else if (a.style==='bun'){ hairBack='<circle cx="24" cy="9" r="5" fill="'+a.hair+'"/>'; }
+  else if (a.style==='curly'){ hairBack='<g fill="'+a.hair+'"><circle cx="15" cy="17" r="6"/><circle cx="21" cy="12" r="6"/><circle cx="28" cy="12" r="6"/><circle cx="34" cy="17" r="6"/><circle cx="13" cy="24" r="5.5"/><circle cx="35" cy="24" r="5.5"/></g>'; }
+  hairFront = '<path d="M15.5 22C17 13 31 13 32.5 22C29 18.5 19 18.5 15.5 22Z" fill="'+a.hair+'"/>';
+  var svg = '<svg viewBox="0 0 48 48" aria-hidden="true"><rect width="48" height="48" fill="'+a.bg+'"/>'+hairBack+
+    '<path d="M6 50C6 40 14 35 24 35C34 35 42 40 42 50Z" fill="'+a.top+'"/>'+
+    '<rect x="21" y="29" width="6" height="8" rx="3" fill="'+a.skin+'"/>'+
+    '<circle cx="24" cy="23" r="8.5" fill="'+a.skin+'"/>'+hairFront+'</svg>';
+  var inner = '<span class="av" style="width:'+s+'px;height:'+s+'px">'+svg+'</span>';
+  return ring ? '<span class="ringav">'+inner+'</span>' : inner;
+}
+var C = {
+  mia:{n:'Mia Castell',h:'@mia.paces.club',f:'Running',fol:'48K',about:'Run-walk coach and creator. Hosts friendly weekend runs for women who think they are too slow. They are not.',a:{bg:'#F6E0DC',skin:'#E9B9A0',hair:'#4A2A22',style:'long',top:'#5B2A3A'}},
+  zoe:{n:'Zoe Hartley',h:'@zoe.lifts.slow',f:'Strength',fol:'31K',about:'Lifts slow and laughs loud. Teaches first-timers to love the barbell.',a:{bg:'#E6CFDA',skin:'#C98A6B',hair:'#2A1A18',style:'bun',top:'#C98A7B'}},
+  noor:{n:'Noor Aziz',h:'@noor.moves',f:'Pilates',fol:'62K',about:'Pilates and mobility creator. Gentle classes and great playlists.',a:{bg:'#CFC6E8',skin:'#8D5A44',hair:'#1E1412',style:'bob',top:'#4A3A7A'}},
+  tali:{n:'Tali Moreno',h:'@tali.hyrox.club',f:'Hyrox',fol:'27K',about:'Hyrox first-timer turned coach. Brings a doubles partner for anyone who needs one.',a:{bg:'#D5E3CF',skin:'#F1CBB5',hair:'#B5703A',style:'curly',top:'#2F5A3E'}}
+};
+var ME = {bg:'#F6E0DC',skin:'#E3AE92',hair:'#6B3B2A',style:'long',top:'#C98A7B'};
+
+/* ---------- venue scenes (original illustrations standing in for photos) ---------- */
+var SID = 0;
+var PAL = [
+  {sky:['#FBE3D6','#F6C9C0'],sun:'#F4D98B',s1:'#E6C9C6',s2:'#DDB8BC'},
+  {sky:['#CFE6EE','#F6E0DC'],sun:'#FFF3D0',s1:'#B9CEDB',s2:'#C9BCD2'},
+  {sky:['#F4B69E','#B88AA6'],sun:'#FBE3A0',s1:'#A57590',s2:'#8E6483'}
+];
+var TOPS = ['#5B2A3A','#C98A7B','#4A3A7A','#2F5A3E','#E8B4A6','#A8625B'];
+var HAIR = ['#4A2A22','#2A1A18','#B5703A','#1E1412','#6B3B2A'];
+var SKIN = ['#E9B9A0','#C98A6B','#8D5A44','#F1CBB5'];
+
+function figs(x,yf,n,sc,gap){
+  var o='', i, top, hair, sk, cx;
+  for (i=0;i<n;i++){
+    top=TOPS[i%TOPS.length]; hair=HAIR[(i+1)%HAIR.length]; sk=SKIN[(i+2)%SKIN.length]; cx=x+i*gap;
+    o+='<g transform="translate('+cx+' '+yf+') scale('+sc+')"><rect x="-4.5" y="-16" width="3.8" height="16" rx="1.9" fill="#3E1B28"/><rect x="0.7" y="-16" width="3.8" height="16" rx="1.9" fill="#3E1B28"/>'+
+      '<rect x="-5.5" y="-32" width="11" height="17" rx="5" fill="'+top+'"/><circle cx="0" cy="-37.5" r="4.6" fill="'+sk+'"/>'+
+      '<path d="M-4.8 -38Q0 -46 4.8 -38Q4 -42 0 -42Q-4 -42 -4.8 -38Z" fill="'+hair+'"/><circle cx="5.6" cy="-40" r="2.2" fill="'+hair+'"/></g>';
+  }
+  return o;
+}
+function palm(x,y,h,c){
+  var tx=x+2, ty=y-h, f='';
+  [[-24,6],[-14,-6],[0,-11],[14,-6],[24,6]].forEach(function(d){
+    f+='<path d="M'+tx+' '+ty+'Q'+(tx+d[0]*0.6)+' '+(ty+d[1]-10)+' '+(tx+d[0])+' '+(ty+d[1]+4)+'" stroke="'+c+'" stroke-width="5" fill="none" stroke-linecap="round"/>';
+  });
+  return '<path d="M'+x+' '+y+'Q'+(x+5)+' '+(y-h/2)+' '+tx+' '+ty+'" stroke="#7A5A48" stroke-width="3" fill="none" stroke-linecap="round"/>'+f;
+}
+function tree(x,y,r,c){
+  return '<rect x="'+(x-2)+'" y="'+y+'" width="4" height="'+Math.round(r*0.9)+'" fill="#7A5A48"/><circle cx="'+x+'" cy="'+y+'" r="'+r+'" fill="'+c+'"/>';
+}
+function skyline(city,base,c1,c2){
+  var s='', x=-4, H, i, w;
+  if (city==='New York'){
+    H=[44,72,52,98,60,112,76,50,84,62,48,72,40];
+    for (i=0;i<H.length;i++){
+      w=22+(i%3)*6;
+      s+='<rect x="'+x+'" y="'+(base-H[i])+'" width="'+w+'" height="'+H[i]+'" fill="'+(i%2?c1:c2)+'"/>';
+      if (H[i]>95) s+='<rect x="'+(x+w/2-1)+'" y="'+(base-H[i]-16)+'" width="2" height="16" fill="'+c2+'"/>';
+      x+=w+3;
+    }
+  } else if (city==='Miami'){
+    H=[26,42,30,56,34,28,46,32,24,40,30,36];
+    for (i=0;i<H.length;i++){
+      s+='<rect x="'+x+'" y="'+(base-H[i])+'" width="32" height="'+H[i]+'" fill="'+(i%2?c1:c2)+'"/><rect x="'+x+'" y="'+(base-H[i]-4)+'" width="32" height="4" fill="'+c2+'" opacity=".7"/>';
+      x+=36;
+    }
+  } else if (city==='Los Angeles'){
+    s+='<path d="M-10 '+base+'L60 '+(base-52)+'L110 '+(base-26)+'L190 '+(base-72)+'L260 '+(base-30)+'L330 '+(base-62)+'L410 '+(base-22)+'V'+base+'Z" fill="'+c1+'"/>';
+    H=[18,28,20,34,22,16,30,20];
+    for (i=0;i<H.length;i++){ s+='<rect x="'+(x+i*52)+'" y="'+(base-H[i])+'" width="26" height="'+H[i]+'" fill="'+c2+'"/>'; }
+  } else {
+    H=[30,52,36,64,40,28,56,34,44,30,38];
+    for (i=0;i<H.length;i++){ s+='<rect x="'+x+'" y="'+(base-H[i])+'" width="30" height="'+H[i]+'" fill="'+(i%2?c1:c2)+'"/>'; x+=34; }
+    s+='<rect x="236" y="'+(base-34)+'" width="70" height="34" fill="'+c1+'"/><path d="M251 '+(base-34)+'A20 20 0 0 1 291 '+(base-34)+'Z" fill="'+c1+'"/><rect x="270" y="'+(base-66)+'" width="2" height="14" fill="'+c1+'"/>';
+  }
+  return s;
+}
+
+function scn(kind,city,v){
+  var id='g'+(++SID), P=PAL[v%3], s='', i, x, mc=['#E8B4A6','#CFC6E8','#F4D98B','#D5E3CF','#F6C9C0'];
+  var defs='<defs><linearGradient id="'+id+'" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="'+P.sky[0]+'"/><stop offset="1" stop-color="'+P.sky[1]+'"/></linearGradient>';
+  if (kind==='studio'){ for (i=0;i<3;i++){ x=36+i*112; defs+='<clipPath id="'+id+'w'+i+'"><path d="M'+x+' 150V74A44 44 0 0 1 '+(x+88)+' 74V150Z"/></clipPath>'; } }
+  defs+='</defs>';
+
+  if (kind==='studio'){
+    s+='<rect width="400" height="224" fill="#F6E8E1"/><rect y="150" width="400" height="74" fill="#DDB896"/><path d="M0 172H400M0 196H400" stroke="#CFA784" stroke-width="2"/>';
+    for (i=0;i<3;i++){
+      x=36+i*112;
+      s+='<g clip-path="url(#'+id+'w'+i+')"><rect x="'+x+'" y="20" width="88" height="140" fill="url(#'+id+')"/><circle cx="'+(x+60)+'" cy="62" r="14" fill="'+P.sun+'"/>'+skyline(city,150,P.s1,P.s2)+'</g>'+
+        '<path d="M'+x+' 150V74A44 44 0 0 1 '+(x+88)+' 74V150Z" fill="none" stroke="#C9A88C" stroke-width="4"/>';
+    }
+    [90,200,310].forEach(function(px){ s+='<path d="M'+px+' 0V16" stroke="#B89A86" stroke-width="2"/><circle cx="'+px+'" cy="20" r="7" fill="'+P.sun+'"/>'; });
+    if (v===1){
+      for (i=0;i<5;i++) s+='<rect x="'+(24+i*74)+'" y="'+(188+(i%2)*6)+'" width="62" height="12" rx="6" fill="'+mc[i]+'"/>';
+      s+='<circle cx="60" cy="176" r="8" fill="#C98A7B"/><circle cx="332" cy="178" r="8" fill="#E8B4A6"/>';
+    } else if (v===2){
+      for (i=0;i<5;i++) s+='<rect x="'+(18+i*76)+'" y="200" width="62" height="12" rx="6" fill="'+mc[i]+'"/>';
+      s+=figs(50,206,5,1.3,76);
+    } else {
+      for (i=0;i<4;i++) s+='<rect x="'+(30+i*88)+'" y="198" width="72" height="12" rx="6" fill="'+mc[i]+'"/>';
+      s+=figs(66,204,4,1.45,88);
+    }
+    s+='<rect x="364" y="190" width="22" height="28" rx="4" fill="#C98A7B"/><ellipse cx="368" cy="176" rx="6" ry="17" fill="#6E9A7E" transform="rotate(-18 368 176)"/><ellipse cx="380" cy="174" rx="6" ry="17" fill="#7FA787" transform="rotate(16 380 174)"/>';
+  } else if (kind==='gym'){
+    s+='<rect width="400" height="224" fill="#3E1B28"/><path d="M0 40H400M0 80H400M0 120H400" stroke="#4B2434" stroke-width="2"/><rect y="170" width="400" height="54" fill="#2A1019"/><rect y="186" width="400" height="28" fill="#5E8A6E"/><path d="M0 200H400" stroke="#7BA68A" stroke-width="2" stroke-dasharray="12 10"/>';
+    s+='<circle cx="'+(v===1?300:200)+'" cy="52" r="24" fill="none" stroke="#E8B4A6" stroke-width="4" opacity=".85"/><circle cx="'+(v===1?300:200)+'" cy="52" r="12" fill="none" stroke="#E8B4A6" stroke-width="3" opacity=".5"/>';
+    [48,352].forEach(function(px){ s+='<rect x="'+(px-5)+'" y="40" width="10" height="136" rx="3" fill="#C98A7B"/>'; });
+    s+='<rect x="43" y="74" width="314" height="8" rx="4" fill="#E8B4A6"/><rect x="43" y="118" width="314" height="6" rx="3" fill="#A8625B"/>';
+    for (i=0;i<5;i++){ x=92+i*34; s+='<path d="M'+(x-7)+' 160Q'+x+' 146 '+(x+7)+' 160" stroke="#E8B4A6" stroke-width="3" fill="none"/><circle cx="'+x+'" cy="168" r="10" fill="#C98A7B"/>'; }
+    s+='<rect x="236" y="196" width="130" height="5" rx="2.5" fill="#D8C4CC"/><rect x="228" y="186" width="9" height="25" rx="4" fill="#C98A7B"/><rect x="238" y="190" width="7" height="17" rx="3" fill="#E8B4A6"/><rect x="357" y="186" width="9" height="25" rx="4" fill="#C98A7B"/><rect x="349" y="190" width="7" height="17" rx="3" fill="#E8B4A6"/>';
+    s+= v===2 ? figs(84,216,5,1.3,50) : v===1 ? figs(120,216,3,1.6,60) : figs(110,216,4,1.45,46);
+  } else {
+    s+='<rect width="400" height="224" fill="url(#'+id+')"/><circle cx="'+(v===1?92:312)+'" cy="'+(v===2?104:54)+'" r="26" fill="'+P.sun+'"/>'+skyline(city,150,P.s1,P.s2);
+    if (kind==='water'){
+      s+='<rect y="148" width="400" height="38" fill="#9FC4D4"/><path d="M0 160q25-6 50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0" stroke="#fff" stroke-opacity=".55" stroke-width="2" fill="none"/><path d="M0 173q25-6 50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0" stroke="#fff" stroke-opacity=".35" stroke-width="2" fill="none"/>'+
+        '<rect y="186" width="400" height="38" fill="#EBD3B8"/><path d="M0 186H400" stroke="#C9A88C" stroke-width="3"/><path d="M0 206H400" stroke="#D9B99B" stroke-width="2"/>';
+      [60,200,340].forEach(function(px){ s+='<rect x="'+(px-1.5)+'" y="150" width="3" height="38" fill="#7A5A48"/><circle cx="'+px+'" cy="148" r="5" fill="'+P.sun+'"/>'; });
+      if (city==='Miami' || city==='Los Angeles') s+=palm(30,188,80,'#2F5A3E')+palm(372,188,66,'#3F6E4F');
+      s+= v===1 ? figs(190,218,3,1.7,46) : v===2 ? figs(120,216,5,1.3,32) : figs(130,216,4,1.45,34);
+    } else if (kind==='trail'){
+      s+='<path d="M0 150Q80 124 170 148T400 134V224H0Z" fill="#BFD6B4"/><path d="M0 176Q110 150 220 180T400 168V224H0Z" fill="#9FC29F"/><path d="M110 224Q170 196 236 184T340 164L362 166Q280 196 262 224Z" fill="#EBD3B8"/>'+
+        tree(40,150,24,'#7FA787')+tree(80,162,17,'#8FB596')+tree(352,146,26,'#7FA787')+tree(318,158,16,'#8FB596')+
+        (v===1 ? figs(200,218,3,1.6,40) : v===2 ? figs(160,216,5,1.3,30) : figs(190,216,4,1.4,32));
+    } else {
+      s+='<path d="M0 152Q200 132 400 156V224H0Z" fill="#BFD6B4"/><path d="M0 184Q200 168 400 188V224H0Z" fill="#A9CBA2"/>'+
+        tree(36,140,30,'#7FA787')+tree(364,136,32,'#6F9B7A')+tree(92,154,18,'#8FB596')+
+        '<path d="M70 70Q200 100 330 70" stroke="#A8625B" fill="none" stroke-width="2"/>';
+      for (i=0;i<7;i++){ x=84+i*38; s+='<path d="M'+x+' '+(78+Math.round(Math.sin(i/6*Math.PI)*16))+'l7 0l-3.5 12z" fill="'+TOPS[i%TOPS.length]+'"/>'; }
+      for (i=0;i<4;i++) s+='<rect x="'+(78+i*66)+'" y="206" width="56" height="10" rx="5" fill="'+mc[i]+'"/>';
+      s+= v===1 ? figs(110,214,3,1.6,90) : v===2 ? figs(90,212,6,1.25,44) : figs(100,212,5,1.35,50);
+    }
+  }
+  return '<span class="cover"><svg viewBox="0 0 400 224" preserveAspectRatio="xMidYMid slice" aria-hidden="true">'+defs+s+'</svg></span>';
+}
+function cover(e){ return scn(e.vk, city(), 0); }
+
+function mapSvg(kind){
+  var wet = kind==='water' || kind==='trail', green = kind==='park' || kind==='trail';
+  return '<svg viewBox="0 0 360 120" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><rect width="360" height="120" fill="#F2E6DF"/>'+
+    (wet?'<path d="M0 82Q90 62 180 84T360 72V120H0Z" fill="#CFE6EE"/>':'')+
+    (green?'<path d="M200 0H360V50Q300 62 250 44T200 40Z" fill="#D5E3CF"/>':'')+
+    (kind==='park'?'<path d="M30 12H150V62H30Z" fill="#D5E3CF"/>':'')+
+    '<g stroke="#fff" stroke-width="7" stroke-linecap="round" fill="none"><path d="M-10 40H370"/><path d="M110 -10V130"/><path d="M250 -10Q240 50 270 130"/></g>'+
+    '<g stroke="#fff" stroke-width="3.5" fill="none"><path d="M-10 92H370M50 0V130M180 -10V130M320 0V130"/></g>'+
+    '<g transform="translate(180 30)"><path d="M0 34C-14 20 -18 12 -18 4A18 18 0 0 1 18 4C18 12 14 20 0 34Z" fill="#5B2A3A"/><circle cx="0" cy="4" r="6" fill="#F6E0DC"/></g></svg>';
+}
+
+/* ---------- product illustrations ---------- */
+function legsG(c,t){ return '<g transform="'+t+'"><path d="M50 34H110L114 140H86L80 70L74 140H46Z" fill="'+c+'"/><rect x="48" y="22" width="64" height="14" rx="7" fill="'+c+'"/><rect x="48" y="22" width="64" height="14" rx="7" fill="rgba(0,0,0,.16)"/><path d="M80 36V70" stroke="rgba(0,0,0,.2)" stroke-width="2"/></g>'; }
+function braG(c,t){ return '<g transform="'+t+'"><path d="M60 40L55 14M100 40L105 14" stroke="'+c+'" stroke-width="6" stroke-linecap="round"/><path d="M44 58Q44 42 58 40L66 40Q80 62 94 40L102 40Q116 42 116 58Q116 88 80 98Q44 88 44 58Z" fill="'+c+'"/><path d="M52 84Q80 96 108 84" stroke="rgba(0,0,0,.2)" stroke-width="3" fill="none" stroke-linecap="round"/></g>'; }
+function pimg(kind,c,bg,fit){
+  var s='<rect width="160" height="160" fill="'+bg+'"/><circle cx="132" cy="28" r="46" fill="#fff" opacity=".4"/><ellipse cx="80" cy="150" rx="46" ry="5" fill="rgba(60,20,34,.12)"/>';
+  if (kind==='leggings') s+=legsG(c,'translate(0 0)');
+  else if (kind==='bra') s+=braG(c,'translate(0 6)');
+  else if (kind==='set') s+=braG(c,'translate(14 2) scale(.62)')+legsG(c,'translate(40 20) scale(.7)');
+  else if (kind==='top') s+='<path d="M52 18L66 18Q80 42 94 18L108 18L114 58L104 64L104 138Q80 146 56 138L56 64L46 58Z" fill="'+c+'"/><path d="M66 18Q80 42 94 18" stroke="rgba(0,0,0,.18)" stroke-width="3" fill="none"/>';
+  else if (kind==='shoe') s+='<path d="M16 102V70Q42 70 56 52L70 56Q78 78 106 84Q142 90 148 110V122H16Z" fill="'+c+'"/><rect x="14" y="120" width="136" height="12" rx="6" fill="#fff" opacity=".9"/><path d="M62 60L74 70M72 56L84 66M82 62L92 72" stroke="#fff" stroke-width="3" stroke-linecap="round"/><path d="M16 102H60" stroke="rgba(0,0,0,.15)" stroke-width="3"/>';
+  else if (kind==='bottle') s+='<rect x="62" y="22" width="36" height="22" rx="7" fill="rgba(0,0,0,.28)"/><rect x="56" y="40" width="48" height="104" rx="15" fill="'+c+'"/><rect x="56" y="76" width="48" height="12" fill="rgba(255,255,255,.35)"/><rect x="66" y="50" width="6" height="40" rx="3" fill="rgba(255,255,255,.3)"/>';
+  else if (kind==='tote') s+='<path d="M58 62Q58 26 80 26T102 62" stroke="'+c+'" stroke-width="7" fill="none" stroke-linecap="round"/><path d="M36 62H124L130 142H30Z" fill="'+c+'"/><rect x="36" y="62" width="88" height="10" fill="rgba(0,0,0,.14)"/><rect x="62" y="96" width="36" height="22" rx="6" fill="rgba(255,255,255,.3)"/>';
+  return '<span class="cover" style="background:'+bg+'"><svg viewBox="0 0 160 160" preserveAspectRatio="xMidYM'+(fit?'id meet':'id slice')+'" aria-hidden="true">'+s+'</svg></span>';
+}
+
+/* ---------- sample data ---------- */
+var EVENTS = [
+  {id:'e1',title:'Saturday Social 5K',cat:'Running',host:'lace',creator:'mia',presented:'muse',mon:'NOV',day:'07',dow:'Sat',time:'8:30 AM',level:'Beginner friendly',price:0,spots:14,km:5,venue:'Lakefront Loop',
+   cv:['#F6E0DC','#F4D98B','#C98A7B','#5B2A3A'],perk:'Free iced matcha after the run',
+   desc:'A relaxed 5K with run-walk intervals. Nobody gets left behind, and matcha follows at the finish.',bring:['Comfortable running shoes','A water bottle','A friend, if you like']},
+  {id:'e4',title:'Lift 101: Your First Barbell',cat:'Strength',host:'soft',creator:'zoe',presented:'luna',mon:'NOV',day:'11',dow:'Wed',time:'7:00 PM',level:'Beginner friendly',price:20,spots:10,km:0,venue:'Soft Strength Studio',
+   cv:['#E6CFDA','#5B2A3A','#C98A7B','#F4D98B'],perk:'Free stretch and recovery session',
+   desc:'Learn the squat, deadlift and press with a coach at your side. Small group, light weights, no gym experience needed.',bring:['Workout clothes','Flat-soled shoes','A towel']},
+  {id:'e6',title:'Easy Pace 10K Prep',cat:'Running',host:'lace',creator:null,presented:'petal',mon:'NOV',day:'12',dow:'Thu',time:'6:30 PM',level:'Some experience',price:0,spots:16,km:6,venue:'Riverside Park',
+   cv:['#D5E3CF','#F4D98B','#8FB59A','#2F5A3E'],perk:'Free electrolyte tabs',
+   desc:'A conversational-pace group run that builds toward your first 10K. Two pace groups, always a leader at the back.',bring:['Running shoes','A light jacket','Water']},
+  {id:'e3',title:'Pilates & Protein Morning',cat:'Pilates',host:'soft',creator:'noor',presented:'bloom',mon:'NOV',day:'13',dow:'Fri',time:'9:00 AM',level:'Beginner friendly',price:28,spots:12,km:0,venue:'Soft Strength Studio',
+   cv:['#CFC6E8','#4A3A7A','#8E7CC3','#F6E0DC'],perk:'Free protein sample box',
+   desc:'A gentle mat Pilates class followed by a smoothie at the studio. Perfect if you want to try something new with a friend.',bring:['A yoga mat if you have one','Grip socks','A friend']},
+  {id:'e2',title:'Hyrox Doubles Starter Day',cat:'Hyrox',host:'iron',creator:'tali',presented:'soleil',mon:'NOV',day:'15',dow:'Sun',time:'10:00 AM',level:'All levels',price:35,spots:8,km:4,venue:'Iron & Rose Lab',
+   cv:['#5B2A3A','#E8B4A6','#C98A7B','#F6E0DC'],perk:'20% off a sports bra',
+   desc:'Learn all eight stations with a partner, at a pace that suits you. Coaches rotate and explain every movement before you try it.',bring:['Training shoes','Water and a snack','A partner, or we pair you up']},
+  {id:'e7',title:"Women's Hyrox Open Gym",cat:'Hyrox',host:'iron',creator:null,presented:null,mon:'NOV',day:'21',dow:'Sat',time:'11:00 AM',level:'Some experience',price:15,spots:6,km:0,venue:'Iron & Rose Lab',
+   cv:['#E8B4A6','#5B2A3A','#F6E0DC','#C98A7B'],perk:null,
+   desc:'Open floor time with the full Hyrox equipment and a coach on hand for form checks.',bring:['Training shoes','Gloves if you like','Water']},
+  {id:'e5',title:'Run, Sip & Brunch',cat:'Social',host:'sun',creator:null,presented:'oat',mon:'NOV',day:'22',dow:'Sun',time:'9:00 AM',level:'All levels',price:18,spots:20,km:3,venue:'Harbor Trail',
+   cv:['#F4D98B','#E8B4A6','#C98A7B','#F6E0DC'],perk:'10% off brunch',
+   desc:'A short, social run or walk along the water, then brunch together. The easiest way to meet new training friends.',bring:['Comfortable shoes','Water','Appetite']}
+];
+var COACHES = [
+  {id:'c1',name:'Maya Reyes',focus:'Running',line:'From couch to first 5K',price:45,yrs:6,tags:['Beginner friendly','Run-walk plans'],a:{bg:'#F6E0DC',skin:'#D9A183',hair:'#2E1B16',style:'long',top:'#5B2A3A'},bio:'Maya helps new runners build a habit without burning out. Expect walk-run plans, gentle progress and plenty of encouragement.'},
+  {id:'c2',name:'Jade Whitfield',focus:'Hyrox',line:'Hyrox prep for first-timers',price:60,yrs:5,tags:['Hyrox','Doubles partners'],a:{bg:'#EBD3B8',skin:'#F1CBB5',hair:'#A5622E',style:'bun',top:'#C98A7B'},bio:'Jade coaches women through their first Hyrox, from learning the stations to pacing race day. She also helps you find a doubles partner.'},
+  {id:'c3',name:'Priya Nair',focus:'Strength',line:'Strength basics, no intimidation',price:55,yrs:8,tags:['Beginner friendly','Gym confidence'],a:{bg:'#E6CFDA',skin:'#B97A58',hair:'#1E1412',style:'bob',top:'#4A3A7A'},bio:'Priya teaches the main lifts step by step so the weight room feels like yours. Sessions are patient, clear and judgment free.'},
+  {id:'c4',name:'Camille Dubois',focus:'Pilates',line:'Pilates and mobility',price:50,yrs:7,tags:['Mobility','Low impact'],a:{bg:'#CFC6E8',skin:'#EEC7AE',hair:'#6B3B2A',style:'curly',top:'#F6E0DC'},bio:'Camille blends Pilates and mobility work to help you move better and feel stronger in everyday life.'},
+  {id:'c5',name:'Tessa Brooks',focus:'Habits',line:'Habit coaching for the stuck',price:40,yrs:4,tags:['Routine building','Accountability'],a:{bg:'#D5E3CF',skin:'#8D5A44',hair:'#1E1412',style:'curly',top:'#2F5A3E'},bio:'Tessa helps you find a kind of movement you actually like, then builds a routine around your real week so it sticks.'},
+  {id:'c6',name:'Lena Okafor',focus:'Strength',line:'Back to training after a break',price:65,yrs:9,tags:['Returning','Strength'],a:{bg:'#F4D98B',skin:'#7A4A38',hair:'#140C0A',style:'bun',top:'#5B2A3A'},bio:'Lena supports women returning to training after a break, with a careful, progressive plan and honest check-ins.'}
+];
+/* ---------- venues (sample places; partner studios and gyms are invented) ---------- */
+var PLACES = {
+  water:{'Miami':['Bayfront Park waterfront','301 Biscayne Blvd'],'New York':['Hudson River Greenway','Pier 62, Chelsea'],'Los Angeles':['Venice Beach boardwalk','1800 Ocean Front Walk'],'Austin':['Lady Bird Lake Trail','Auditorium Shores, S Riverside Dr']},
+  trail:{'Miami':['Biscayne Bay Trail','1745 N Bayshore Dr'],'New York':['Brooklyn Bridge Park promenade','334 Furman St'],'Los Angeles':['Santa Monica beach path','1550 Pacific Coast Hwy'],'Austin':['Barton Creek Greenbelt','2201 Barton Springs Rd']},
+  park:{'Miami':['Margaret Pace Park','1745 N Bayshore Dr'],'New York':['Prospect Park, Long Meadow','Prospect Park W & 9th St'],'Los Angeles':['Griffith Park, Crystal Springs','4730 Crystal Springs Dr'],'Austin':['Zilker Park','2100 Barton Springs Rd']},
+  studio:{'Miami':['Soft Strength Studio · Wynwood','240 NW 25th St'],'New York':['Soft Strength Studio · Williamsburg','88 N 6th St'],'Los Angeles':['Soft Strength Studio · Silver Lake','2812 Sunset Blvd'],'Austin':['Soft Strength Studio · East Austin','1105 E 6th St']},
+  gym:{'Miami':['Iron & Rose Lab · Wynwood','2200 NW 2nd Ave'],'New York':['Iron & Rose Lab · Long Island City','27-10 Jackson Ave'],'Los Angeles':['Iron & Rose Lab · Arts District','1855 Industrial St'],'Austin':['Iron & Rose Lab · South Congress','1612 S Congress Ave']}
+};
+var EVK = {e1:'water',e4:'studio',e6:'park',e3:'studio',e2:'gym',e7:'gym',e5:'trail'};
+var CVK = {c1:'park',c2:'gym',c3:'studio',c4:'studio',c5:'trail',c6:'gym'};
+EVENTS.forEach(function(e){ e.vk = EVK[e.id]; });
+COACHES.forEach(function(c){ c.vk = CVK[c.id]; });
+function venue(kind){ return PLACES[kind][city()]; }
+function isPartner(kind){ return kind==='studio' || kind==='gym'; }
+
+/* ---------- shop (sample brands and products) ---------- */
+var SHOPB = [
+  {id:'tide',line:'Leggings that stay put',off:20,isNew:true},
+  {id:'flora',line:'Support for every size',off:15,isNew:true},
+  {id:'soleil',line:'Soft, supportive sets',off:15,isNew:false},
+  {id:'stride',line:'Trainers for first miles',off:10,isNew:true},
+  {id:'halo',line:'Bottles, bags and gear',off:20,isNew:false}
+];
+function sb(id){ return SHOPB.filter(function(x){return x.id===id;})[0]; }
+var CLR = {
+  plum:{n:'Plum',h:'#5B2A3A'}, rose:{n:'Rose',h:'#C98A7B'}, ink:{n:'Midnight',h:'#2E2036'}, sage:{n:'Sage',h:'#7FA787'},
+  blush:{n:'Blush',h:'#E8B4A6'}, lilac:{n:'Lilac',h:'#8E7CC3'}, sand:{n:'Sand',h:'#D9B99B'}, sky:{n:'Sky',h:'#8DB8CC'}, cream:{n:'Cream',h:'#E9D8CB'}
+};
+var CLOTHES = ['XS','S','M','L','XL'];
+var PRODUCTS = [
+  {id:'p1',b:'tide',n:'Stay-Put High-Rise Leggings',cat:'Leggings',p:78,kind:'leggings',c:['plum','ink','sage'],sz:CLOTHES,tag:'Bestseller',d:'A high waist that does not roll, a squat-proof fabric and a pocket big enough for your phone. Sizes XXS to 4X.'},
+  {id:'p2',b:'flora',n:'Everyday Support Sports Bra',cat:'Bras',p:52,kind:'bra',c:['rose','blush','sky'],sz:CLOTHES,tag:'New brand',d:'Medium support with a soft band and adjustable straps. Made to be comfortable from the first run to the last.'},
+  {id:'p3',b:'soleil',n:'Seamless Matching Set',cat:'Sets',p:120,kind:'set',c:['sand','plum','blush'],sz:CLOTHES,tag:'Set',d:'A seamless bra and legging that move together. Soft, breathable and easy to wear all day.'},
+  {id:'p4',b:'stride',n:'Cloud Run Trainers',cat:'Shoes',p:135,kind:'shoe',c:['lilac','cream','plum'],sz:['6','7','8','9','10'],tag:'New brand',d:'Cushioned trainers with a roomy toe box, designed around the female foot. A friendly first pair for your first 5K.'},
+  {id:'p5',b:'halo',n:'Insulated Bottle 24 oz',cat:'Gear',p:32,kind:'bottle',c:['blush','sage','ink'],sz:['24 oz'],tag:'Gear',d:'Keeps water cold for 24 hours. Fits cup holders, stroller pockets and gym bags.'},
+  {id:'p6',b:'soleil',n:'Longline Sports Bra',cat:'Bras',p:58,kind:'bra',c:['plum','sand','sky'],sz:CLOTHES,tag:'',d:'Extra coverage and a flattering longline cut for studio classes and strength days.'},
+  {id:'p7',b:'tide',n:'Lift Tank',cat:'Tops',p:44,kind:'top',c:['blush','cream','ink'],sz:CLOTHES,tag:'',d:'A lightweight, breathable tank with a relaxed fit and a lower back panel that stays put during deadlifts.'},
+  {id:'p8',b:'halo',n:'Daily Gym Tote',cat:'Gear',p:64,kind:'tote',c:['rose','ink','sand'],sz:['One size'],tag:'',d:'Fits shoes, a towel and a laptop. A wet pocket keeps sweaty clothes away from everything else.'}
+];
+var SHOP_FILTERS = ['All','Sets','Leggings','Bras','Tops','Shoes','Gear'];
+function prod(id){ return PRODUCTS.filter(function(x){return x.id===id;})[0]; }
+function salePrice(p){ return Math.round(p.p*(1-sb(p.b).off/100)); }
+function pcol(p){ var i = S.pc[p.id]; return CLR[p.c[i!=null?i:0]]; }
+function psize(p){ return S.ps[p.id] || p.sz[Math.min(2,p.sz.length-1)]; }
+
+/* ---------- Strava sync (sample activities) ---------- */
+var SYNCQ = [
+  {t:'Park run',type:'Run',km:6.1,steps:8000,when:'Sat · 8:05 AM'},
+  {t:'Sunday long walk',type:'Walk',km:7.4,steps:9700,when:'Sun · 10:30 AM'},
+  {t:'Lunch walk',type:'Walk',km:3.2,steps:4200,when:'Yesterday · 12:15 PM'},
+  {t:'Early ride',type:'Ride',km:22,steps:0,when:'Today · 6:10 AM',skip:true,reason:'Rides do not count in this challenge'},
+  {t:'Morning run',type:'Run',km:4.8,steps:6300,when:'Today · 7:42 AM'}
+];
+var SYNC_HIST = [
+  {t:'Easy run',type:'Run',km:5.2,steps:6800,when:'Mon',pace:'6:30 / km'},
+  {t:'Walk with Sam',type:'Walk',km:3.1,steps:4100,when:'Tue',pace:'11:50 / km'}
+];
+var SLOTS = ['Thu · 6:00 PM','Fri · 12:30 PM','Sat · 9:00 AM'];
+var REVS = [
+  {n:'Jordan M.',t:'I felt welcome from the first minute. I finally enjoy training.'},
+  {n:'Aisha K.',t:'Clear, patient and never pushy. Worth every session.'},
+  {n:'Sofia R.',t:'I booked the free intro call and signed up the same week.'}
+];
+
+var GOALS = [
+  {id:'run',label:'Start running',ev:'e1',co:'c1'},
+  {id:'hyrox',label:'Try Hyrox',ev:'e2',co:'c2'},
+  {id:'strength',label:'Build strength',ev:'e4',co:'c3'},
+  {id:'routine',label:'Find a routine I enjoy',ev:'e3',co:'c5'},
+  {id:'people',label:'Meet people to train with',ev:'e5',co:'c1'}
+];
+var LEVELS = ['Brand new','Getting started','Back after a break'];
+var CITIES = ['Miami','New York','Los Angeles','Austin'];
+var REWARDS = [
+  {km:10,brand:'muse',title:'2-for-1 matcha',code:'MUSE-DEMO10'},
+  {km:25,brand:'soleil',title:'15% off activewear',code:'SOLEIL-DEMO15'},
+  {km:40,brand:'petal',title:'Free electrolyte tabs',code:'PETAL-DEMO40'},
+  {km:50,brand:'glow',title:'Free class pass',code:'GLOW-DEMO50'}
+];
+var EV_FILTERS = ['All','Running','Hyrox','Strength','Pilates','Social','Saved'];
+var CO_FILTERS = ['All','Running','Hyrox','Strength','Pilates','Habits'];
+var TARGET = 50;
+
+/* ---------- state ---------- */
+var S;
+function fresh(){
+  return {screen:'welcome',step:0,quiz:{goal:null,level:null,city:null},tab:'home',overlay:null,sheet:null,
+    evFilter:'All',coFilter:'All',shopFilter:'All',strava:{on:false,q:0,feed:[],today:0,acts:0},share:{},slot:{},savedP:{},pc:{},ps:{},joined:{},booked:{},saved:{},followed:{},attended:{},rated:{},km:12.4,
+    ch:{streak:false,first5k:false},form:{title:'',date:'',price:'',cat:'Running'},focus:null};
+}
+S = fresh();
+
+function ev(id){ return EVENTS.filter(function(e){return e.id===id;})[0]; }
+function co(id){ return COACHES.filter(function(c){return c.id===id;})[0]; }
+function goal(){ return GOALS.filter(function(g){return g.id===S.quiz.goal;})[0] || GOALS[3]; }
+function city(){ return S.quiz.city || 'Miami'; }
+function dateLabel(e){ return e.dow+', Nov '+parseInt(e.day,10); }
+function spotsLeft(e){ return e.spots - (S.joined[e.id]?1:0); }
+function unlocked(r){ return S.km >= r.km; }
+function addKm(k){ var b0=S.km; S.km=Math.min(TARGET,Math.round((S.km+k)*10)/10); return REWARDS.filter(function(r){return b0<r.km && S.km>=r.km;})[0]; }
+function chip(label,on,act){ return '<button class="chip" aria-pressed="'+on+'" data-act="'+act+'" data-val="'+label+'">'+label+'</button>'; }
+function evTags(e){
+  var h = '<span class="pill">'+icon('shield',14)+'Women only</span><span class="pill line">'+e.level+'</span>';
+  h += e.price ? '<span class="pill line">$'+e.price+'</span>' : '<span class="pill good">Free</span>';
+  if (S.attended[e.id]) h += '<span class="pill good">'+icon('check',14)+'Attended</span>';
+  else if (S.joined[e.id]) h += '<span class="pill good">'+icon('check',14)+'Going</span>';
+  return h;
+}
+function hostLine(e){
+  var n = B[e.host].n;
+  return e.creator ? n+' with '+C[e.creator].n : n;
+}
+/* perks: from challenge rewards and from attended events */
+function perks(){
+  var out = REWARDS.map(function(r,i){ return {key:'r'+i,brand:r.brand,title:r.title,code:r.code,ok:unlocked(r),need:r.km+' km',km:r.km,src:'Challenge reward'}; });
+  EVENTS.forEach(function(e){
+    if (e.perk) out.push({key:'p'+e.id,brand:e.presented,title:e.perk,code:B[e.presented].code+'-DEMO-'+e.id.toUpperCase(),ok:!!S.attended[e.id],need:'attending '+e.title,src:'Event perk'});
+  });
+  return out;
+}
+function perk(key){ return perks().filter(function(p){return p.key===key;})[0]; }
+
+/* ---------- views ---------- */
+function evRow(e){
+  return '<div class="evc"><button class="card" data-act="open-event" data-id="'+e.id+'">'+
+    '<span class="thumb">'+cover(e)+'<span class="hostlogo">'+logo(e.host,30)+'</span></span>'+
+    '<span class="ev-main" style="padding-right:34px"><span class="ev-date">'+dateLabel(e)+' · '+e.time+'</span>'+
+    '<span class="ev-title">'+e.title+'</span><span class="ev-sub">'+hostLine(e)+'</span>'+
+    '<span class="ev-sub vline">'+icon('pin',13)+venue(e.vk)[0]+'</span>'+
+    '<span class="tags" style="margin-top:2px">'+evTags(e)+'</span></span></button>'+
+    '<button class="save" data-act="save" data-id="'+e.id+'" aria-pressed="'+(!!S.saved[e.id])+'" aria-label="Save '+e.title+'">'+icon('bookmark',22)+'</button></div>';
+}
+function evMini(e){
+  return '<button class="card mini" data-act="open-event" data-id="'+e.id+'">'+
+    '<span class="mcov">'+cover(e)+'<span class="hostlogo">'+logo(e.host,36)+'</span></span>'+
+    '<span class="mbody"><span class="ev-date">'+dateLabel(e)+' · '+e.time+'</span>'+
+    '<span class="ev-title">'+e.title+'</span><span class="ev-sub">'+hostLine(e)+'</span>'+
+    '<span class="tags"><span class="pill">'+icon('shield',14)+'Women only</span>'+(e.price?'<span class="pill line">$'+e.price+'</span>':'<span class="pill good">Free</span>')+'</span></span></button>';
+}
+function coRow(c){
+  return '<button class="card" data-act="open-coach" data-id="'+c.id+'" style="align-items:center">'+person(c.a,58)+
+    '<span class="ev-main"><span class="ev-title">'+c.name+'</span><span class="ev-sub">'+c.line+'</span>'+
+    '<span class="tags" style="margin-top:2px"><span class="pill">'+icon('shield',14)+'Verified</span><span class="pill line">From $'+c.price+'</span>'+
+    (S.booked[c.id]?'<span class="pill good">'+icon('check',14)+'Requested</span>':'')+'</span></span></button>';
+}
+function coMini(c){
+  return '<button class="card coachmini" data-act="open-coach" data-id="'+c.id+'">'+person(c.a,56)+
+    '<span><span class="ev-title" style="display:block">'+c.name+'</span><span class="ev-sub">'+c.line+'</span></span>'+
+    '<span class="pill line">From $'+c.price+'</span></button>';
+}
+function creatorChip(id){
+  var c = C[id];
+  return '<button class="cr" data-act="open-host" data-id="'+id+'">'+person(c.a,64,true)+'<b>'+c.n.split(' ')[0]+'</b><span class="f">'+c.fol+' · '+c.f+'</span></button>';
+}
+
+function homeView(){
+  var g = goal(), e = ev(g.ev), rec = co(g.co);
+  var coaches = [rec].concat(COACHES.filter(function(c){return c.id!==rec.id;})).slice(0,4);
+  var soon = EVENTS.filter(function(x){return x.id!==e.id;}).slice(0,5);
+  var pct = Math.min(100, S.km/TARGET*100);
+  return '<header class="hdr"><div><span class="pinchip">'+icon('pin',14)+city()+'</span><h1 class="title">Hi, Emma</h1><p class="muted" style="margin-top:6px">Ready for something new this week?</p></div><span class="markbox">'+mark(34)+'</span></header>'+
+  '<article class="feat"><div class="feat-media">'+cover(e)+'<span class="pill">'+icon('star',13)+'Picked for you</span></div>'+
+    '<div class="feat-body"><div class="feat-host">'+logo(e.host,34)+'<span class="small muted">'+hostLine(e)+'</span></div>'+
+    '<h2 class="h2" style="font-size:30px">'+e.title+'</h2>'+
+    '<p class="muted">'+dateLabel(e)+' · '+e.time+' · '+city()+'</p>'+
+    '<div class="tags">'+evTags(e)+'</div>'+
+    '<button class="btn primary block" data-act="open-event" data-id="'+e.id+'">See event</button></div></article>'+
+  '<div class="sec-h"><h2 class="h2">Creators to follow</h2></div>'+
+  '<div class="scroller">'+Object.keys(C).map(creatorChip).join('')+'</div>'+
+  '<div class="sec-h"><h2 class="h2">Happening soon</h2><button class="link" data-act="tab" data-tab="events">See all</button></div>'+
+  '<div class="scroller">'+soon.map(evMini).join('')+'</div>'+
+  '<div class="sec-h"><h2 class="h2">Your challenge</h2></div>'+
+  '<button class="prog" data-act="tab" data-tab="challenges"><span class="prog-top"><span><span class="ev-title" style="display:block">Move 50K in 30 days</span><span class="ev-sub">'+S.km.toFixed(1)+' of '+TARGET+' km'+(S.strava.on?' · Strava synced':'')+'</span></span>'+
+    '<span class="stack">'+['muse','soleil','petal','glow'].map(function(b){return logo(b,36);}).join('')+'</span></span>'+
+    '<span class="bar" role="img" aria-label="'+Math.round(pct)+' percent complete"><span style="width:'+pct+'%"></span></span></button>'+
+  brandsHome()+
+  '<div class="sec-h"><h2 class="h2">Coaches for you</h2><button class="link" data-act="tab" data-tab="coaches">See all</button></div>'+
+  '<div class="scroller">'+coaches.map(coMini).join('')+'</div>'+
+  '<section class="promise"><span>'+icon('shield',28)+'</span><div><h3 class="ev-title">A safe space, by design</h3>'+
+    '<p class="muted small" style="margin-top:4px">Women-only events, verified hosts and active moderation.</p>'+
+    '<button class="link" data-act="sheet" data-sheet="promise">Read our promise</button></div></section>';
+}
+
+function eventsView(){
+  var list = EVENTS.filter(function(e){
+    if (S.evFilter==='All') return true;
+    if (S.evFilter==='Saved') return !!S.saved[e.id];
+    return e.cat===S.evFilter;
+  });
+  return '<span class="pinchip">'+icon('pin',14)+city()+'</span>'+
+  '<h1 class="title" style="margin-bottom:16px">Events</h1>'+
+  '<div class="chips" role="group" aria-label="Filter events">'+EV_FILTERS.map(function(f){return chip(f,S.evFilter===f,'ev-filter');}).join('')+'</div>'+
+  '<div class="list" style="margin-top:18px">'+
+  (list.length? list.map(evRow).join('') : '<p class="muted">'+(S.evFilter==='Saved'?'Nothing saved yet. Tap the bookmark on any event to keep it here.':'No events in this category yet.')+'</p>')+'</div>'+
+  '<p class="muted small" style="margin-top:20px">Every event is hosted by a verified club, studio or creator and open to women only.</p>';
+}
+
+function coachesView(){
+  var list = COACHES.filter(function(c){ return S.coFilter==='All' || c.focus===S.coFilter; });
+  return '<p class="eyebrow">Verified coaches</p>'+
+  '<h1 class="title" style="margin:4px 0 8px">Find your coach</h1>'+
+  '<p class="muted" style="margin-bottom:16px">Coaches who love working with beginners. Ask for a free intro call before you commit.</p>'+
+  '<div class="chips" role="group" aria-label="Filter coaches">'+CO_FILTERS.map(function(f){return chip(f,S.coFilter===f,'co-filter');}).join('')+'</div>'+
+  '<div class="list" style="margin-top:18px">'+(list.length?list.map(coRow).join(''):'<p class="muted">No coaches in this category yet.</p>')+'</div>';
+}
+
+function ring(){
+  var c = 2*Math.PI*74, p = Math.min(1,S.km/TARGET);
+  return '<div class="ringwrap"><svg width="176" height="176" viewBox="0 0 176 176" role="img" aria-label="'+S.km.toFixed(1)+' of '+TARGET+' kilometers">'+
+  '<circle cx="88" cy="88" r="74" fill="none" style="stroke:var(--line)" stroke-width="12"/>'+
+  '<circle cx="88" cy="88" r="74" fill="none" style="stroke:var(--primary)" stroke-width="12" stroke-linecap="round" stroke-dasharray="'+(c*p).toFixed(1)+' '+c.toFixed(1)+'" transform="rotate(-90 88 88)"/></svg>'+
+  '<div class="mid"><b>'+S.km.toFixed(1)+'</b><span class="muted small">of '+TARGET+' km</span></div></div>';
+}
+function perkRow(p){
+  var b = B[p.brand];
+  return '<button class="reward'+(p.ok?'':' locked')+'" data-act="perk" data-key="'+p.key+'">'+logo(p.brand,46)+
+  '<span class="ev-main"><span class="ev-title">'+p.title+'</span><span class="ev-sub">'+b.n+'</span></span>'+
+  (p.ok?'<span class="pill good">Unlocked</span>':'<span class="pill line">'+icon('lock',13)+(p.km?(p.km-S.km).toFixed(1)+' km to go':'Attend')+'</span>')+'</button>';
+}
+function challengesView(){
+  var next = REWARDS.filter(function(r){return !unlocked(r);})[0];
+  var more = [
+    {id:'streak',title:'7-day move streak',by:'sun',note:'Starts Nov 1 · any movement counts'},
+    {id:'first5k',title:'First 5K in 8 weeks',by:'lace',note:'Starts Nov 3 · run-walk plan included'}
+  ];
+  return '<p class="eyebrow">Featured challenge</p>'+
+  '<h1 class="title" style="margin:4px 0 16px">Move 50K in 30 days</h1>'+
+  '<section class="card" style="flex-direction:column;align-items:center;gap:14px;padding:20px">'+ring()+
+    '<p class="muted" style="text-align:center">'+(next?('<b style="color:var(--ink)">'+(next.km-S.km).toFixed(1)+' km</b> to your next reward'):'Challenge complete. You unlocked every reward.')+'</p>'+
+    '<button class="btn ghost block" data-act="sheet" data-sheet="log">'+icon('plus',18)+'Log kilometers by hand</button>'+
+    '<div style="display:flex;flex-direction:column;align-items:center;gap:8px"><span class="stack">'+['muse','soleil','petal','glow'].map(function(b){return logo(b,34);}).join('')+'</span>'+
+    '<p class="muted small" style="text-align:center">Sponsored by Matcha Muse, Soleil Activewear, Petal Hydration and Glow Pilates</p></div></section>'+
+  stravaCard()+
+  '<p class="muted small" style="margin-top:12px">Kilometers from events you attend count toward the challenge.</p>'+
+  '<div class="sec-h"><h2 class="h2">Rewards</h2></div>'+
+  '<div class="list">'+perks().filter(function(p){return p.src==='Challenge reward';}).map(perkRow).join('')+'</div>'+
+  '<div class="sec-h"><h2 class="h2">More challenges</h2></div>'+
+  '<div class="list">'+more.map(function(m){
+    var on = S.ch[m.id];
+    return '<div class="card" style="align-items:center">'+logo(m.by,46)+
+    '<span class="ev-main"><span class="ev-title">'+m.title+'</span><span class="ev-sub">'+m.note+'</span></span>'+
+    '<button class="chip" aria-pressed="'+on+'" data-act="join-ch" data-id="'+m.id+'">'+(on?'Joined':'Join')+'</button></div>';
+  }).join('')+'</div>';
+}
+
+function profileView(){
+  var mine = EVENTS.filter(function(e){return S.joined[e.id];});
+  var savedL = EVENTS.filter(function(e){return S.saved[e.id];});
+  var mp = perks().filter(function(p){return p.ok;});
+  var coachReq = COACHES.filter(function(c){return S.booked[c.id];}).length;
+  function row(act,ic,label,sub,extra){
+    return '<button class="row" data-act="'+act+'"'+(extra||'')+'><span class="l">'+icon(ic,22)+'<span><span style="font-weight:500;display:block">'+label+'</span>'+(sub?'<span class="muted small">'+sub+'</span>':'')+'</span></span>'+icon('chev',18)+'</button>';
+  }
+  return '<div style="display:flex;gap:16px;align-items:center;margin-bottom:22px">'+person(ME,80,true)+
+    '<div><h1 class="title" style="font-size:34px">Emma</h1><p class="muted">'+city()+' · '+goal().label+'</p><p class="muted small">'+(S.quiz.level||'Getting started')+'</p></div></div>'+
+  '<div class="stats"><div class="stat"><b>'+Object.keys(S.attended).length+'</b><span>Attended</span></div><div class="stat"><b>'+S.km.toFixed(0)+'</b><span>Km logged</span></div><div class="stat"><b>'+mp.length+'</b><span>Perks</span></div></div>'+
+  '<div class="sec-h"><h2 class="h2">My events</h2></div>'+
+  (mine.length? '<div class="list">'+mine.map(evRow).join('')+'</div>' :
+    '<div class="card" style="flex-direction:column;align-items:flex-start;gap:10px"><p class="muted">You have not joined any events yet. Your first one is a few taps away.</p><button class="btn ghost sm" data-act="tab" data-tab="events">Browse events</button></div>')+
+  (savedL.length? '<div class="sec-h"><h2 class="h2">Saved</h2></div><div class="list">'+savedL.map(evRow).join('')+'</div>':'')+
+  (PRODUCTS.some(function(p){return S.savedP[p.id];})? '<div class="sec-h"><h2 class="h2">Wishlist</h2></div><div class="pgrid">'+PRODUCTS.filter(function(p){return S.savedP[p.id];}).map(prodCard).join('')+'</div>':'')+
+  '<div class="sec-h"><h2 class="h2">My perks</h2></div>'+
+  (mp.length? '<div class="list">'+mp.map(perkRow).join('')+'</div>' : '<p class="muted">Attend events and log kilometers to unlock perks from our brand partners.</p>')+
+  (coachReq? '<p class="muted small" style="margin-top:12px">Intro calls requested: '+coachReq+'</p>':'')+
+  '<div class="sec-h"><h2 class="h2">Settings</h2></div>'+
+  '<div>'+
+    row('sheet','shield','Community promise','How we keep this space safe',' data-sheet="promise"')+
+    row('sheet','route','Connected apps',S.strava.on?'Strava · connected':'Strava · not connected',' data-sheet="strava"')+
+    row('open-dash','bars','Partner view (demo)','See what a host or brand sees')+
+    '<div class="row"><span class="l">'+icon('globe',22)+'<span><span style="font-weight:500;display:block">Language</span><span class="muted small">English (US). Español coming soon.</span></span></span></div>'+
+    row('reset','redo','Restart demo','Go back to the welcome screen')+
+  '</div>';
+}
+
+function tabView(){
+  if (S.tab==='home') return homeView();
+  if (S.tab==='events') return eventsView();
+  if (S.tab==='coaches') return coachesView();
+  if (S.tab==='shop') return shopView();
+  if (S.tab==='challenges') return challengesView();
+  return profileView();
+}
+function tabbar(){
+  var tabs=[['home','Home','home'],['events','Events','cal'],['challenges','Challenges','trophy'],['coaches','Coaches','coach'],['shop','Shop','bag'],['profile','Profile','user']];
+  return '<nav class="tabbar" aria-label="Main">'+tabs.map(function(t){
+    return '<button class="tab" data-act="tab" data-tab="'+t[0]+'"'+(S.tab===t[0]?' aria-current="page"':'')+'><span class="ico">'+icon(t[2],22)+'</span>'+t[1]+'</button>';
+  }).join('')+'</nav>';
+}
+
+function welcomeView(){
+  var deco = '<svg class="deco" viewBox="0 0 340 340" aria-hidden="true"><g fill="none" stroke="#E8B4A6" stroke-width="2"><circle cx="170" cy="170" r="60" opacity=".5"/><circle cx="170" cy="170" r="110" opacity=".32"/><circle cx="170" cy="170" r="160" opacity=".2"/></g><circle cx="262" cy="96" r="14" fill="#E8B4A6" opacity=".85"/></svg>';
+  return '<div class="welcome">'+deco+'<div><div style="color:var(--hero-ink)">'+mark(84)+'</div>'+
+  '<h1 class="brand">ChicLifts</h1><p class="tag">Find your people.<br>Find your pace.</p>'+
+  '<ul><li>'+icon('shield',22)+'Women-only events from clubs, creators and brands</li>'+
+  '<li>'+icon('coach',22)+'Coaches who love working with beginners</li>'+
+  '<li>'+icon('gift',22)+'Challenges with rewards from local brands</li></ul></div>'+
+  '<div><div class="logorow">'+['lace','iron','soft','sun','glow'].map(function(b){return logo(b,36);}).join('')+'<span>and more partners</span></div>'+
+  '<button class="btn inverse block" data-act="start">Get started</button><p class="fine">Prototype with sample data</p></div></div>';
+}
+function quizView(){
+  var steps = [
+    {q:'What brings you here?',key:'goal',opts:GOALS.map(function(g){return {v:g.id,l:g.label};})},
+    {q:'Where are you starting from?',key:'level',opts:LEVELS.map(function(l){return {v:l,l:l};})},
+    {q:'Which city are you in?',key:'city',opts:CITIES.map(function(c){return {v:c,l:c};})}
+  ];
+  var st = steps[S.step], cur = S.quiz[st.key];
+  return '<div class="quiz"><div class="quiz-top">'+
+    (S.step>0?'<button class="iconbtn" data-act="quiz-back" aria-label="Back">'+icon('back',20)+'</button>':'<span style="width:44px"></span>')+
+    '<div class="dots" aria-label="Step '+(S.step+1)+' of 3">'+[0,1,2].map(function(i){return '<span class="'+(i<=S.step?'on':'')+'"></span>';}).join('')+'</div>'+
+    '<button class="link" data-act="quiz-skip">Skip</button></div>'+
+    '<h1 class="title">'+st.q+'</h1>'+
+    '<div class="opts" role="group" aria-label="'+st.q+'">'+st.opts.map(function(o){
+      return '<button class="opt" aria-pressed="'+(cur===o.v)+'" data-act="quiz-pick" data-key="'+st.key+'" data-val="'+o.v+'"><span>'+o.l+'</span>'+icon('check',22)+'</button>';
+    }).join('')+'</div>'+
+    '<button class="btn primary block" data-act="quiz-next"'+(cur?'':' disabled')+'>'+(S.step===2?'Show me my plan':'Continue')+'</button></div>';
+}
+
+/* ---------- venue block (events and coaches) ---------- */
+function whereBlock(kind,title,labels){
+  var p = venue(kind), part = isPartner(kind);
+  return '<div><h2 class="h2" style="margin-bottom:10px">'+title+'</h2>'+
+    '<div class="scroller gal">'+[0,1,2].map(function(i){
+      return '<figure class="shot"><span class="shotimg">'+scn(kind,city(),i)+'</span><figcaption>'+labels[i]+'</figcaption></figure>';
+    }).join('')+'</div>'+
+    '<div class="venue"><div class="mapcard">'+mapSvg(kind)+'</div><div class="venue-body"><b>'+p[0]+'</b>'+
+      '<span class="muted small">'+p[1]+', '+city()+'</span>'+
+      (part?'<span class="pill good">'+icon('shield',14)+'ChicLifts partner venue</span>':'<span class="pill line">'+icon('pin',14)+'Public outdoor space</span>')+
+      '<button class="btn ghost sm" data-act="maps">'+icon('map',18)+'Get directions (demo)</button></div></div>'+
+    '<p class="muted small" style="margin-top:8px">Illustrations stand in for photos. Hosts upload real ones.</p></div>';
+}
+
+/* ---------- Strava ---------- */
+function actRow(a){
+  return '<div class="act'+(a.skip?' skipped':'')+'"><span class="ai">'+icon(a.type==='Run'?'run':a.type==='Walk'?'route':'bars',22)+'</span>'+
+    '<span class="ev-main"><span class="ev-title" style="font-size:15px">'+a.t+'</span><span class="ev-sub">'+a.when+(a.skip?'':' · '+a.steps.toLocaleString('en-US')+' steps')+'</span></span>'+
+    '<span style="text-align:right;display:flex;flex-direction:column;gap:4px;align-items:flex-end"><b>'+a.km+' km</b>'+
+    (a.skip?'<span class="pill line">Not counted</span>':'<span class="pill good">'+icon('check',13)+'Counted</span>')+'</span></div>';
+}
+function stravaCard(){
+  var st = S.strava;
+  if (!st.on){
+    return '<section class="card" style="flex-direction:column;gap:14px;margin-top:14px;padding:18px">'+
+      '<div style="display:flex;gap:14px;align-items:center"><span class="sbadge">'+icon('route',24)+'</span><div><b class="ev-title" style="display:block">Count your steps automatically</b><span class="ev-sub">Connect Strava and your runs and walks add up on their own.</span></div></div>'+
+      '<button class="btn primary block" data-act="sheet" data-sheet="strava">Connect Strava</button>'+
+      '<p class="muted small">No Strava? You can still log kilometers by hand, or use Apple Health and Google Fit.</p></section>';
+  }
+  return '<section class="card" style="flex-direction:column;gap:14px;margin-top:14px;padding:18px">'+
+    '<div style="display:flex;gap:14px;align-items:center;justify-content:space-between"><div style="display:flex;gap:12px;align-items:center"><span class="sbadge">'+icon('route',24)+'</span><div><b class="ev-title" style="display:block">Strava</b><span class="ev-sub">Auto-sync is on</span></div></div>'+
+      '<button class="chip" data-act="sheet" data-sheet="strava">Manage</button></div>'+
+    '<div class="stats" style="grid-template-columns:1fr 1fr"><div class="stat"><b>'+st.today.toLocaleString('en-US')+'</b><span>Steps today</span></div><div class="stat"><b>'+st.acts+'</b><span>Activities this week</span></div></div>'+
+    '<button class="btn primary block" data-act="sync">'+icon('sync',18)+(st.q<SYNCQ.length?'Sync now (demo)':'Everything is up to date')+'</button>'+
+    '<div class="list" style="gap:10px">'+st.feed.slice(0,5).map(actRow).join('')+'</div>'+
+    '<p class="muted small">Runs and walks with GPS count. Rides and manual entries are skipped, so rewards stay fair.</p></section>';
+}
+
+/* ---------- shop ---------- */
+function prodCard(p){
+  var b = sb(p.b), sp = salePrice(p), c = pcol(p);
+  return '<div class="prodw"><button class="prod" data-act="open-prod" data-id="'+p.id+'"><span class="pimg">'+pimg(p.kind,c.h,B[p.b].bg)+'</span>'+
+    '<span class="pbody"><span class="small muted">'+B[p.b].n+'</span><span class="pn">'+p.n+'</span>'+
+    '<span class="pprice"><span>$'+sp+'</span><s>$'+p.p+'</s><span class="pill good">'+b.off+'% off</span></span></span></button>'+
+    (p.tag?'<span class="pill ptag">'+p.tag+'</span>':'')+
+    '<button class="psave" data-act="save-p" data-id="'+p.id+'" aria-pressed="'+(!!S.savedP[p.id])+'" aria-label="Save '+p.n+'">'+icon('bookmark',20)+'</button></div>';
+}
+function brandCard(s){
+  var b = B[s.id];
+  return '<button class="card brandcard" data-act="open-host" data-id="'+s.id+'">'+logo(s.id,52)+
+    '<span><span class="ev-title" style="display:block">'+b.n+'</span><span class="ev-sub">'+s.line+'</span></span>'+
+    '<span class="tags">'+(s.isNew?'<span class="pill solid">New on ChicLifts</span>':'')+'<span class="pill good">'+s.off+'% off</span></span></button>';
+}
+function shopView(){
+  var list = PRODUCTS.filter(function(p){ return S.shopFilter==='All' || p.cat===S.shopFilter; });
+  return '<p class="eyebrow">Activewear catalog</p>'+
+  '<h1 class="title" style="margin:4px 0 8px">Shop</h1>'+
+  '<p class="muted" style="margin-bottom:6px">Discover women-first sports brands and member-only discounts. We do not sell anything, we introduce you to brands.</p>'+
+  '<div class="sec-h" style="margin-top:22px"><h2 class="h2">Brands to discover</h2></div>'+
+  '<div class="scroller">'+SHOPB.map(brandCard).join('')+'</div>'+
+  '<div class="sec-h" style="margin-top:22px"><h2 class="h2">Member prices</h2></div>'+
+  '<div class="chips" role="group" aria-label="Filter products">'+SHOP_FILTERS.map(function(f){return chip(f,S.shopFilter===f,'shop-filter');}).join('')+'</div>'+
+  '<div class="pgrid" style="margin-top:16px">'+(list.length?list.map(prodCard).join(''):'')+'</div>'+
+  '<p class="disclose" style="margin-top:18px">'+icon('tag',15)+'<span>Paid partnership. Brands pay to be listed here. You buy on the brand’s own site with your ChicLifts code.</span></p>';
+}
+function productOverlay(){
+  var p = prod(S.overlay.id), b = sb(p.b), sp = salePrice(p), c = pcol(p), sz = psize(p), code = B[p.b].code+'-CHIC'+b.off;
+  var more = PRODUCTS.filter(function(x){return x.b===p.b && x.id!==p.id;});
+  return '<div class="ov-scroll flush" id="ovs"><div class="ov-cover" style="height:280px">'+pimg(p.kind,c.h,B[p.b].bg,true)+
+    '<div class="ov-cover-bar"><button class="iconbtn glass" data-act="back" aria-label="Back">'+icon('back',20)+'</button>'+
+    '<button class="iconbtn glass" data-act="save-p" data-id="'+p.id+'" aria-pressed="'+(!!S.savedP[p.id])+'" aria-label="Save">'+icon('bookmark',20)+'</button></div></div>'+
+  '<div class="ov-body"><div><div class="tags" style="margin-bottom:10px"><span class="pill solid">'+p.cat+'</span><span class="pill good">'+b.off+'% off with ChicLifts</span></div>'+
+    '<h1 class="title" style="font-size:32px">'+p.n+'</h1>'+
+    '<p class="pprice" style="font-size:22px;margin-top:8px"><span>$'+sp+'</span><s>$'+p.p+'</s></p></div>'+
+  '<button class="hostrow" data-act="open-host" data-id="'+p.b+'">'+logo(p.b,44)+'<span class="tx"><small>From</small><b>'+B[p.b].n+'</b><small>'+B[p.b].k+'</small></span>'+icon('chev',18)+'</button>'+
+  '<div><h2 class="h2" style="margin-bottom:10px">Color · <span class="muted" style="font-family:var(--font-body);font-size:17px;font-weight:500">'+c.n+'</span></h2><div class="swatches">'+
+    p.c.map(function(k,i){ return '<button class="sw" data-act="sel-color" data-id="'+p.id+'" data-val="'+i+'" aria-pressed="'+((S.pc[p.id]||0)===i)+'" aria-label="'+CLR[k].n+'" style="background:'+CLR[k].h+'"></button>'; }).join('')+'</div></div>'+
+  '<div><h2 class="h2" style="margin-bottom:10px">Size</h2><div class="sizes" role="group" aria-label="Size">'+
+    p.sz.map(function(z){ return '<button class="chip" aria-pressed="'+(sz===z)+'" data-act="sel-size" data-id="'+p.id+'" data-val="'+z+'">'+z+'</button>'; }).join('')+'</div></div>'+
+  '<div><h2 class="h2" style="margin-bottom:8px">About</h2><p class="muted">'+p.d+'</p></div>'+
+  '<div class="perk">'+logo(p.b,48)+'<div><b>Your code: '+code+'</b><span class="muted small" style="display:block">'+b.off+'% off your order. Demo code, not valid at any real store.</span></div></div>'+
+  (more.length?'<div><h2 class="h2" style="margin-bottom:12px">More from '+B[p.b].n+'</h2><div class="pgrid">'+more.map(prodCard).join('')+'</div></div>':'')+
+  '<p class="disclose">'+icon('tag',15)+'<span>Paid partnership. '+B[p.b].n+' pays to be listed. ChicLifts does not sell or ship this item.</span></p></div></div>'+
+  '<div class="ov-bar"><button class="iconbtn" data-act="copy-code" data-code="'+code+'" aria-label="Copy code">'+icon('copy',20)+'</button><button class="btn primary" style="flex:1" data-act="visit" data-id="'+p.b+'">Visit '+B[p.b].n.split(' ')[0]+' (demo)</button></div>';
+}
+function brandsHome(){
+  return '<div class="sec-h"><h2 class="h2">New brands to discover</h2><button class="link" data-act="tab" data-tab="shop">See shop</button></div>'+
+    '<div class="scroller">'+SHOPB.filter(function(s){return s.isNew;}).map(brandCard).join('')+'</div>';
+}
+
+/* ---------- coach overlay (with training place, slots, Strava sharing) ---------- */
+function coachOverlay(){
+  var c = co(S.overlay.id), b = S.booked[c.id], first = c.name.split(' ')[0], idx = parseInt(c.id.slice(1),10);
+  var slot = S.slot[c.id] || SLOTS[0], sh = !!S.share[c.id], st = S.strava;
+  var share;
+  if (st.on){
+    share = '<div class="card" style="flex-direction:column;gap:10px"><div style="display:flex;gap:12px;align-items:center;justify-content:space-between"><div style="display:flex;gap:12px;align-items:center"><span class="sbadge">'+icon('route',22)+'</span><div><b class="ev-title" style="display:block;font-size:15px">Share my progress with '+first+'</b><span class="ev-sub">From your Strava, with your permission</span></div></div>'+
+      '<button class="chip" aria-pressed="'+sh+'" data-act="share-coach" data-id="'+c.id+'">'+(sh?'On':'Off')+'</button></div>'+
+      (sh?'<div class="demo" style="border-style:solid;padding:12px"><p class="eyebrow">What '+first+' sees</p><p class="muted small">'+S.km.toFixed(1)+' km this month · '+st.acts+' activities this week · '+st.today.toLocaleString('en-US')+' steps today. Never your route map or home address.</p></div>':'')+'</div>';
+  } else {
+    share = '<div class="card" style="flex-direction:column;gap:10px"><div style="display:flex;gap:12px;align-items:center"><span class="sbadge">'+icon('route',22)+'</span><div><b class="ev-title" style="display:block;font-size:15px">Let '+first+' follow your progress</b><span class="ev-sub">Connect Strava and share your weekly numbers.</span></div></div><button class="btn ghost sm" data-act="sheet" data-sheet="strava">Connect Strava</button></div>';
+  }
+  return '<div class="ov-top"><button class="iconbtn" data-act="back" aria-label="Back">'+icon('back',20)+'</button><p class="eyebrow">'+c.focus+' coach</p></div>'+
+  '<div class="ov-scroll" id="ovs">'+
+    '<section style="display:flex;flex-direction:column;gap:12px;align-items:flex-start">'+person(c.a,92,true)+'<h1 class="title">'+c.name+'</h1><p style="font-weight:500">'+c.line+'</p>'+
+      '<div class="tags"><span class="pill solid">'+icon('shield',14)+'Verified coach</span>'+c.tags.map(function(t){return '<span class="pill">'+t+'</span>';}).join('')+'</div></section>'+
+    '<dl class="facts"><div class="fact"><dt>From</dt><dd>$'+c.price+' per session</dd></div><div class="fact"><dt>Experience</dt><dd>'+c.yrs+' years</dd></div>'+
+      '<div class="fact"><dt>Format</dt><dd>In person or online</dd></div><div class="fact"><dt>Intro call</dt><dd>Free, 15 min</dd></div></dl>'+
+    '<div><h2 class="h2" style="margin-bottom:8px">About '+first+'</h2><p class="muted">'+c.bio+'</p></div>'+
+    whereBlock(c.vk,'Where '+first+' trains',['Meeting spot','The space','Group sessions'])+
+    '<div><h2 class="h2" style="margin-bottom:10px">Training together</h2>'+share+'</div>'+
+    '<div><h2 class="h2" style="margin-bottom:10px">Pick a time for your intro call</h2><div class="chips" style="margin-inline:0;padding-inline:0;flex-wrap:wrap" role="group" aria-label="Intro call time">'+
+      SLOTS.map(function(t){ return '<button class="chip" aria-pressed="'+(slot===t)+'" data-act="slot" data-id="'+c.id+'" data-val="'+t+'">'+t+'</button>'; }).join('')+'</div></div>'+
+    '<div><h2 class="h2" style="margin-bottom:10px">On your intro call</h2><ul class="checks"><li>'+icon('check',18)+'Your goals and where you are starting</li><li>'+icon('check',18)+'A simple plan for the first month</li><li>'+icon('check',18)+'Prices and schedule, no pressure to book</li></ul></div>'+
+    '<div><h2 class="h2" style="margin-bottom:10px">What women say (sample)</h2><div class="list" style="gap:10px">'+
+      [REVS[idx%3],REVS[(idx+1)%3]].map(function(r){ return '<div class="card" style="flex-direction:column;gap:6px"><span class="revstars" role="img" aria-label="5 out of 5 stars">'+[1,2,3,4,5].map(function(){return icon('star',16);}).join('')+'</span><p>'+r.t+'</p><span class="muted small">'+r.n+'</span></div>'; }).join('')+'</div></div>'+
+  '</div>'+
+  '<div class="ov-bar"><button class="btn '+(b?'ghost':'primary')+' block" data-act="book" data-id="'+c.id+'">'+(b?icon('check',18)+'Requested for '+slot+' · tap to cancel':'Request free intro call · '+slot)+'</button></div>';
+}
+
+/* overlays */
+function hostRow(id,label,kind){
+  var isC = kind==='creator';
+  var name = isC ? C[id].n : B[id].n;
+  var sub = isC ? C[id].h+' · '+C[id].fol+' followers' : B[id].k;
+  return '<button class="hostrow" data-act="open-host" data-id="'+id+'">'+(isC?person(C[id].a,44):logo(id,44))+
+    '<span class="tx"><small>'+label+'</small><b>'+name+'</b><small>'+sub+'</small></span>'+icon('chev',18)+'</button>';
+}
+function eventOverlay(){
+  var e = ev(S.overlay.id), joined = S.joined[e.id], att = S.attended[e.id];
+  var h = '';
+  h += '<div class="ov-scroll flush" id="ovs"><div class="ov-cover">'+cover(e)+
+    '<div class="ov-cover-bar"><button class="iconbtn glass" data-act="back" aria-label="Back">'+icon('back',20)+'</button>'+
+    '<button class="iconbtn glass" data-act="save" data-id="'+e.id+'" aria-pressed="'+(!!S.saved[e.id])+'" aria-label="Save event">'+icon('bookmark',20)+'</button></div></div>'+
+  '<div class="ov-body"><div><div class="tags" style="margin-bottom:10px"><span class="pill solid">'+e.cat+'</span><span class="pill">'+icon('shield',14)+'Women only</span></div>'+
+    '<h1 class="title">'+e.title+'</h1><p class="muted" style="margin-top:8px">'+dateLabel(e)+' · '+e.time+'</p></div>'+
+  '<div class="list" style="gap:10px">'+hostRow(e.host,'Hosted by','brand')+(e.creator?hostRow(e.creator,'With creator','creator'):'')+(e.presented?hostRow(e.presented,'Presented by','brand'):'')+
+    (e.presented?'<p class="disclose">'+icon('tag',15)+'<span>Paid partnership. '+B[e.presented].n+' sponsors this event.</span></p>':'')+'</div>'+
+  '<dl class="facts"><div class="fact"><dt>Where</dt><dd>'+venue(e.vk)[0]+'</dd></div><div class="fact"><dt>Level</dt><dd>'+e.level+'</dd></div>'+
+    '<div class="fact"><dt>Price</dt><dd>'+(e.price?'$'+e.price:'Free')+'</dd></div><div class="fact"><dt>Spots left</dt><dd>'+spotsLeft(e)+'</dd></div></dl>';
+  if (e.perk || e.km){
+    h += '<div class="perk">'+(e.presented?logo(e.presented,48):'<span class="markbox">'+icon('trophy',24)+'</span>')+'<div>'+
+      (e.perk?'<b>Perk: '+e.perk+'</b>':'')+
+      (e.km?'<span class="muted small" style="display:block">Counts '+e.km+' km toward Move 50K</span>':'')+
+      '<span class="muted small" style="display:block">Unlocks when you check in at the event</span></div></div>';
+  }
+  h += whereBlock(e.vk,'Where you will meet',['Meeting point','The space','Your group']);
+  h += '<div><h2 class="h2" style="margin-bottom:8px">About</h2><p class="muted">'+e.desc+'</p></div>'+
+    '<div><h2 class="h2" style="margin-bottom:10px">What to bring</h2><ul class="checks">'+e.bring.map(function(b){return '<li>'+icon('check',18)+b+'</li>';}).join('')+'</ul></div>';
+  if (joined && !att){
+    h += '<div class="demo"><p class="eyebrow">Event day (demo)</p><p class="muted small">In the real app, hosts scan your code at the door. Try it here.</p><button class="btn ghost sm" style="align-self:flex-start" data-act="checkin" data-id="'+e.id+'">Simulate check-in</button></div>';
+  }
+  if (att){
+    var r = S.rated[e.id]||0;
+    h += '<div class="demo" style="border-style:solid"><p class="eyebrow">How was it?</p><div class="stars" role="group" aria-label="Rate this event">'+[1,2,3,4,5].map(function(n){return '<button data-act="rate" data-id="'+e.id+'" data-n="'+n+'" aria-pressed="'+(n<=r)+'" aria-label="'+n+' stars">'+icon('star',28)+'</button>';}).join('')+'</div>'+
+      '<p class="muted small">'+(r?'Thanks. Your rating helps other women choose.':'Your rating helps other women choose.')+'</p></div>';
+  }
+  h += '<div class="safe">'+icon('shield',22)+'<div><p>Women-only space. Hosts follow the ChicLifts community promise.</p><button class="link" style="color:var(--good)" data-act="report">Report a concern</button></div></div></div></div>';
+  h += '<div class="ov-bar"><button class="iconbtn" data-act="invite" aria-label="Invite a friend">'+icon('send',20)+'</button>'+
+    (att?'<button class="btn ghost" style="flex:1" disabled>'+icon('check',18)+'Attended</button>':
+    '<button class="btn '+(joined?'ghost':'primary')+'" style="flex:1" data-act="join" data-id="'+e.id+'">'+(joined?icon('check',18)+'Joined · tap to cancel':'Join event · '+(e.price?'$'+e.price:'Free'))+'</button>')+'</div>';
+  return h;
+}
+function hostOverlay(){
+  var id = S.overlay.id, isC = !!C[id], d = isC?C[id]:B[id];
+  var bandBg = isC ? d.a.bg : d.bg;
+  var evs = EVENTS.filter(function(e){return e.host===id||e.creator===id||e.presented===id;});
+  var isBrand = !isC && d.k.indexOf('Brand')===0;
+  var fol = !!S.followed[id];
+  var deco = '<svg viewBox="0 0 390 150" preserveAspectRatio="xMidYMid slice" aria-hidden="true" style="position:absolute;inset:0;width:100%;height:100%"><g fill="none" stroke="'+(isC?d.a.top:d.fg)+'" stroke-width="2" opacity=".22"><circle cx="330" cy="40" r="46"/><circle cx="330" cy="40" r="80"/><circle cx="330" cy="40" r="116"/></g></svg>';
+  var stat = isC ? [d.fol,'Followers'] : (isBrand?['—','Partner']:[d.members,'Members']);
+  var statsHtml = '<div class="stats"><div class="stat"><b>'+stat[0]+'</b><span>'+stat[1]+'</span></div><div class="stat"><b>'+evs.length+'</b><span>Events</span></div><div class="stat"><b>'+(isC?'4.9':(d.rating||'4.8'))+'</b><span>Rating (sample)</span></div></div>';
+  var h = '<div class="ov-scroll flush" id="ovs"><div class="hostband" style="background:'+bandBg+'">'+deco+
+    '<div class="ov-cover-bar"><button class="iconbtn glass" data-act="back" aria-label="Back">'+icon('back',20)+'</button></div>'+
+    '<span class="hostlogo-lg'+(isC?' round':'')+'">'+(isC?person(d.a,88):logo(id,88,26))+'</span></div>'+
+  '<div class="ov-body" style="margin-top:0;padding-top:46px;border-radius:0">'+
+    '<div><div class="tags" style="margin-bottom:8px"><span class="pill solid">'+(isC?'Creator · '+d.f:d.k)+'</span><span class="pill">'+icon('shield',14)+'Verified</span></div>'+
+    '<h1 class="title" style="font-size:34px">'+d.n+'</h1>'+(isC?'<p class="muted" style="margin-top:4px">'+d.h+'</p>':'')+'</div>'+
+    '<button class="btn '+(fol?'ghost':'primary')+' block" data-act="follow" data-id="'+id+'">'+(fol?icon('check',18)+'Following':'Follow')+'</button>'+
+    statsHtml+
+    '<div><h2 class="h2" style="margin-bottom:8px">About</h2><p class="muted">'+d.about+'</p></div>';
+  if (isBrand) h += '<p class="disclose">'+icon('tag',15)+'<span>Paid partnership. This brand pays to sponsor events and rewards on ChicLifts.</span></p>';
+  if (evs.length) h += '<div><h2 class="h2" style="margin-bottom:12px">'+(isBrand?'Events it presents':'Upcoming events')+'</h2><div class="list">'+evs.map(evRow).join('')+'</div></div>';
+  var pr = PRODUCTS.filter(function(p){return p.b===id;});
+  if (pr.length) h += '<div><h2 class="h2" style="margin-bottom:12px">In the shop</h2><div class="pgrid">'+pr.map(prodCard).join('')+'</div></div>';
+  var rw = perks().filter(function(p){return p.brand===id;});
+  if (rw.length) h += '<div><h2 class="h2" style="margin-bottom:12px">Perks</h2><div class="list">'+rw.map(perkRow).join('')+'</div></div>';
+  h += '</div></div>';
+  return h;
+}
+function dashOverlay(){
+  var w=[8,12,15,18,21,22], max=22;
+  return '<div class="ov-top"><button class="iconbtn" data-act="back" aria-label="Back">'+icon('back',20)+'</button><p class="eyebrow">Partner view · demo</p></div>'+
+  '<div class="ov-scroll" id="ovs">'+
+    '<div style="display:flex;gap:14px;align-items:center">'+logo('lace',58)+'<div><h1 class="h2">Lace Up Run Club</h1><p class="muted small">Sample numbers, last 6 weeks</p></div></div>'+
+    '<button class="btn primary block" data-act="sheet" data-sheet="create">'+icon('plus',18)+'Create an event</button>'+
+    '<div class="stats"><div class="stat"><b>1,284</b><span>Profile views</span></div><div class="stat"><b>96</b><span>Sign-ups</span></div><div class="stat"><b>212</b><span>Saves</span></div></div>'+
+    '<div><h2 class="h2" style="margin-bottom:6px">Sign-ups per week</h2><div class="bars" role="img" aria-label="Weekly sign-ups: 8, 12, 15, 18, 21, 22">'+
+      w.map(function(v,i){return '<div><b>'+v+'</b><i style="height:'+Math.round(v/max*96)+'px"></i><span>W'+(i+1)+'</span></div>';}).join('')+'</div></div>'+
+    '<div><h2 class="h2" style="margin-bottom:10px">Your events</h2><div class="list">'+
+      '<div class="card" style="align-items:center"><span class="ev-main"><span class="ev-title">Saturday Social 5K</span><span class="ev-sub">Nov 7 · 18 signed up</span></span><span class="pill good">Open</span></div>'+
+      '<div class="card" style="align-items:center"><span class="ev-main"><span class="ev-title">Easy Pace 10K Prep</span><span class="ev-sub">Nov 12 · 12 signed up</span></span><span class="pill good">Open</span></div></div></div>'+
+    '<div><h2 class="h2" style="margin-bottom:10px">Get more visibility</h2><div class="list">'+
+      '<div class="plan"><h3 class="ev-title">Free listing</h3><p class="muted small">Club profile and up to 2 events a month.</p></div>'+
+      '<div class="plan feat2"><h3 class="ev-title">Featured</h3><p class="muted small">Top of search, home screen carousel, brand sponsor matching and reward sponsorship.</p></div>'+
+      '<div class="plan"><h3 class="ev-title">Shop listing for brands</h3><p class="muted small">Show products to members with a discount code, and see clicks and code uses.</p></div>'+
+      '<p class="muted small">Plans and prices are examples and still to be defined.</p></div></div>'+
+  '</div>';
+}
+function overlayView(){
+  if (!S.overlay) return '';
+  var t = S.overlay.type;
+  var inner = t==='event'?eventOverlay():t==='coach'?coachOverlay():t==='host'?hostOverlay():t==='prod'?productOverlay():dashOverlay();
+  return '<div class="overlay" role="region" aria-label="Details">'+inner+'</div>';
+}
+
+/* sheets */
+function sheetView(){
+  if (!S.sheet) return '';
+  var closeBtn = '<button class="iconbtn close" data-act="close-sheet" aria-label="Close">'+icon('close',20)+'</button>';
+  var h = '<button class="scrim" data-act="close-sheet" aria-label="Close"></button><div class="sheet" role="dialog" aria-modal="true"><div class="grab"></div>';
+  var t = S.sheet.type;
+  if (t==='promise'){
+    h += '<div class="sheet-head"><h2 class="h2">Our community promise</h2>'+closeBtn+'</div>'+
+    '<ul class="checks"><li>'+icon('shield',20)+'<span><b>Women only.</b> Every event and group is for women.</span></li>'+
+    '<li>'+icon('check',20)+'<span><b>Verified hosts.</b> We check every club, creator and coach before they are listed.</span></li>'+
+    '<li>'+icon('tag',20)+'<span><b>Clear sponsorships.</b> Paid partnerships are always labeled.</span></li>'+
+    '<li>'+icon('check',20)+'<span><b>Beginners first.</b> Questions are welcome, and nobody is ranked or compared.</span></li>'+
+    '<li>'+icon('flag',20)+'<span><b>Easy reporting.</b> Tell us about any concern and the team follows up.</span></li></ul>'+
+    '<button class="btn primary block" data-act="close-sheet">Got it</button>';
+  } else if (t==='strava'){
+    if (S.strava.on){
+      h += '<div class="sheet-head"><h2 class="h2">Strava</h2>'+closeBtn+'</div>'+
+      '<div class="card" style="align-items:center"><span class="sbadge">'+icon('route',24)+'</span><span class="ev-main"><span class="ev-title">Connected</span><span class="ev-sub">Runs and walks sync automatically</span></span><span class="pill good">'+icon('check',13)+'On</span></div>'+
+      '<ul class="checks"><li>'+icon('check',20)+'<span>Each activity counts once toward your kilometers.</span></li><li>'+icon('check',20)+'<span>You can stop sharing with a coach at any time.</span></li></ul>'+
+      '<button class="btn ghost block" data-act="strava-off">Disconnect Strava</button>';
+    } else {
+      h += '<div class="sheet-head"><h2 class="h2">Connect Strava</h2>'+closeBtn+'</div>'+
+      '<div style="display:flex;gap:14px;align-items:center"><span class="sbadge">'+icon('route',24)+'</span><p class="muted">Your steps and kilometers count toward challenges and rewards, without logging anything by hand.</p></div>'+
+      '<ul class="checks"><li>'+icon('check',20)+'<span><b>What we read.</b> Activity type, distance, date and steps.</span></li>'+
+      '<li>'+icon('lock',20)+'<span><b>Stays private.</b> Never your route map or home address, and we never post for you.</span></li>'+
+      '<li>'+icon('shield',20)+'<span><b>Fair rewards.</b> Only runs and walks count. Rides and manual entries are skipped.</span></li>'+
+      '<li>'+icon('redo',20)+'<span><b>Your choice.</b> Disconnect anytime.</span></li></ul>'+
+      '<button class="btn primary block" data-act="strava-connect">Authorize with Strava (demo)</button>'+
+      '<p class="muted small">The real app uses the official Strava connection, plus Apple Health and Google Fit for steps.</p>';
+    }
+  } else if (t==='log'){
+    h += '<div class="sheet-head"><h2 class="h2">Log a run or walk</h2>'+closeBtn+'</div>'+
+    '<p class="muted">How far did you go today?</p><div class="kmgrid">'+[2,3,5,10].map(function(k){return '<button class="btn ghost" data-act="add-km" data-km="'+k+'">+ '+k+' km</button>';}).join('')+'</div>'+
+    '<p class="muted small">'+(S.strava.on?'Strava already adds your runs and walks. Use this only for anything it missed.':'Tip: connect Strava in Challenges and this happens on its own.')+'</p>';
+  } else if (t==='perk'){
+    var p = perk(S.sheet.key), b = B[p.brand];
+    h += '<div class="sheet-head"><div style="display:flex;gap:12px;align-items:center">'+logo(p.brand,48)+'<div><h2 class="h2" style="font-size:24px">'+p.title+'</h2><p class="muted small">'+b.n+' · '+p.src+'</p></div></div>'+closeBtn+'</div>';
+    if (p.ok) h += '<p class="muted">Show this code at checkout.</p><div class="code">'+p.code+'</div><button class="btn primary block" data-act="copy-code" data-code="'+p.code+'">'+icon('copy',18)+'Copy code</button><p class="muted small">Demo code, not valid at any real business.</p>';
+    else if (p.key.charAt(0)==='r') h += '<p class="muted">Reach '+p.need+' to unlock this reward. You have '+(parseFloat(p.need)-S.km).toFixed(1)+' km to go.</p><button class="btn primary block" data-act="open-log">Log kilometers</button>';
+    else h += '<p class="muted">Unlocks after '+p.need+'. Check in at the event to get your code.</p><button class="btn primary block" data-act="close-sheet">Got it</button>';
+  } else if (t==='create'){
+    var f = S.form;
+    h += '<div class="sheet-head"><h2 class="h2">Create an event</h2>'+closeBtn+'</div>'+
+    '<label class="fld" for="f-title">Event name<input class="inp" id="f-title" value="'+f.title+'" placeholder="Sunrise 5K for beginners" autocomplete="off"></label>'+
+    '<div class="fld">Type<div class="chips" style="margin-inline:0;padding-inline:0;flex-wrap:wrap" role="group" aria-label="Event type">'+['Running','Hyrox','Strength','Pilates','Social'].map(function(c){return '<button class="chip" aria-pressed="'+(f.cat===c)+'" data-act="form-cat" data-val="'+c+'">'+c+'</button>';}).join('')+'</div></div>'+
+    '<label class="fld" for="f-date">Date and time<input class="inp" id="f-date" value="'+f.date+'" placeholder="Sat, Nov 28 · 8:30 AM" autocomplete="off"></label>'+
+    '<label class="fld" for="f-price">Price in dollars<input class="inp" id="f-price" value="'+f.price+'" placeholder="0 for free" inputmode="numeric" autocomplete="off"></label>'+
+    '<div class="safe">'+icon('shield',22)+'<p>All ChicLifts events are women only. Our team reviews every new event.</p></div>'+
+    '<button class="btn primary block" data-act="submit-event">Submit for review (demo)</button>';
+  }
+  return h+'</div>';
+}
+
+/* ---------- render ---------- */
+var lastKey='', lastOv='';
+function render(){
+  var app = document.getElementById('app');
+  var scr = document.getElementById('screen'), ovs = document.getElementById('ovs');
+  var key = S.screen+S.tab, okey = S.overlay? S.overlay.type+(S.overlay.id||''):'';
+  var scrTop = scr? scr.scrollTop:0, ovTop = ovs? ovs.scrollTop:0;
+  var html;
+  if (S.screen==='welcome') html = welcomeView();
+  else if (S.screen==='quiz') html = quizView();
+  else html = '<div class="screen" id="screen">'+tabView()+'</div>'+tabbar()+overlayView()+sheetView();
+  app.innerHTML = html;
+  var ns = document.getElementById('screen'), no = document.getElementById('ovs');
+  if (ns && key===lastKey) ns.scrollTop = scrTop;
+  if (no && okey===lastOv) no.scrollTop = ovTop;
+  lastKey = key; lastOv = okey;
+  if (S.focus){ var f = app.querySelector(S.focus); if (f) f.focus(); S.focus=null; }
+}
+
+var tt;
+function toast(msg){
+  var t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  clearTimeout(tt); tt = setTimeout(function(){ t.classList.remove('show'); },2600);
+}
+
+/* ---------- actions ---------- */
+function act(a,d){
+  switch(a){
+    case 'start': S.screen='quiz'; S.step=0; break;
+    case 'quiz-pick': S.quiz[d.key]=d.val; break;
+    case 'quiz-back': S.step=Math.max(0,S.step-1); break;
+    case 'quiz-next':
+      if (S.step<2) S.step++; else { S.screen='main'; S.tab='home'; }
+      break;
+    case 'quiz-skip':
+      if (!S.quiz.goal) S.quiz.goal='routine';
+      if (!S.quiz.level) S.quiz.level='Getting started';
+      if (!S.quiz.city) S.quiz.city='Miami';
+      S.screen='main'; S.tab='home'; break;
+    case 'tab': S.tab=d.tab; S.overlay=null; S.sheet=null; break;
+    case 'ev-filter': S.evFilter=d.val; break;
+    case 'co-filter': S.coFilter=d.val; break;
+    case 'open-event': S.overlay={type:'event',id:d.id}; S.sheet=null; S.focus='.overlay .iconbtn'; break;
+    case 'open-coach': S.overlay={type:'coach',id:d.id}; S.focus='.overlay .iconbtn'; break;
+    case 'open-host': S.overlay={type:'host',id:d.id}; S.focus='.overlay .iconbtn'; break;
+    case 'open-dash': S.overlay={type:'dash'}; S.focus='.overlay .iconbtn'; break;
+    case 'back': S.overlay=null; break;
+    case 'save':
+      S.saved[d.id] = !S.saved[d.id];
+      toast(S.saved[d.id] ? 'Saved to your list.' : 'Removed from saved.');
+      break;
+    case 'follow':
+      S.followed[d.id] = !S.followed[d.id];
+      toast(S.followed[d.id] ? 'Following. You will see their new events.' : 'Unfollowed.');
+      break;
+    case 'join':
+      S.joined[d.id] = !S.joined[d.id];
+      toast(S.joined[d.id] ? 'You are in. Added to My events.' : 'Spot released.');
+      break;
+    case 'checkin':
+      var e1 = ev(d.id), before = S.km;
+      S.attended[d.id] = true; S.joined[d.id] = true;
+      S.km = Math.min(TARGET, Math.round((S.km+e1.km)*10)/10);
+      var hit = REWARDS.filter(function(r){return before<r.km && S.km>=r.km;})[0];
+      toast(hit ? 'Checked in. Reward unlocked: '+hit.title : 'Checked in'+(e1.km?' · +'+e1.km+' km':'')+(e1.perk?' · perk unlocked':''));
+      break;
+    case 'rate':
+      S.rated[d.id] = parseInt(d.n,10); toast('Rating saved (demo).'); break;
+    case 'book':
+      S.booked[d.id] = !S.booked[d.id];
+      toast(S.booked[d.id] ? 'Intro call requested for '+(S.slot[d.id]||SLOTS[0])+' (demo).' : 'Request cancelled.');
+      break;
+    case 'invite': toast('Demo: the share sheet opens here.'); return;
+    case 'report': toast('Demo: reports go to the ChicLifts team.'); return;
+    case 'join-ch':
+      S.ch[d.id] = !S.ch[d.id];
+      toast(S.ch[d.id] ? 'Challenge joined.' : 'You left the challenge.');
+      break;
+    case 'sheet': S.sheet={type:d.sheet}; S.focus='.sheet .close'; break;
+    case 'open-log': S.sheet={type:'log'}; S.focus='.sheet .close'; break;
+    case 'close-sheet': S.sheet=null; break;
+    case 'perk': S.sheet={type:'perk',key:d.key}; S.focus='.sheet .close'; break;
+    case 'add-km':
+      var b0 = S.km, add = parseFloat(d.km);
+      S.km = Math.min(TARGET, Math.round((S.km+add)*10)/10);
+      var hit2 = REWARDS.filter(function(r){return b0<r.km && S.km>=r.km;})[0];
+      S.sheet=null;
+      toast(hit2 ? 'Reward unlocked: '+hit2.title : '+'+add+' km logged');
+      break;
+    case 'form-cat': S.form.cat=d.val; break;
+    case 'shop-filter': S.shopFilter=d.val; break;
+    case 'open-prod': S.overlay={type:'prod',id:d.id}; S.focus='.overlay .iconbtn'; break;
+    case 'save-p':
+      S.savedP[d.id] = !S.savedP[d.id];
+      toast(S.savedP[d.id] ? 'Added to your wishlist.' : 'Removed from wishlist.');
+      break;
+    case 'sel-color': S.pc[d.id]=parseInt(d.val,10); break;
+    case 'sel-size': S.ps[d.id]=d.val; break;
+    case 'visit': toast('Demo: opens '+B[d.id].n+' with your code applied.'); return;
+    case 'maps': toast('Demo: opens your maps app with directions.'); return;
+    case 'slot': S.slot[d.id]=d.val; break;
+    case 'share-coach':
+      S.share[d.id] = !S.share[d.id];
+      toast(S.share[d.id] ? 'Sharing your weekly progress (demo).' : 'Stopped sharing.');
+      break;
+    case 'strava-connect':
+      S.strava = {on:true,q:0,feed:SYNC_HIST.slice().reverse(),today:3400,acts:2};
+      S.sheet=null; toast('Strava connected (demo).'); break;
+    case 'strava-off':
+      S.strava = {on:false,q:0,feed:[],today:0,acts:0}; S.share={};
+      S.sheet=null; toast('Strava disconnected.'); break;
+    case 'sync':
+      var it = SYNCQ[S.strava.q];
+      if (!it){ toast('Everything is up to date.'); return; }
+      S.strava.q++;
+      S.strava.feed.unshift(it);
+      if (it.skip){ toast('Skipped: '+it.reason+'.'); break; }
+      S.strava.today += (it.when.indexOf('Today')===0 ? it.steps : 0);
+      S.strava.acts++;
+      var hit3 = addKm(it.km);
+      toast(hit3 ? 'Reward unlocked: '+hit3.title : '+'+it.km+' km from Strava');
+      break;
+    case 'submit-event':
+      if (!S.form.title.trim()){ toast('Add an event name first.'); return; }
+      S.sheet=null; S.form={title:'',date:'',price:'',cat:'Running'};
+      toast('Submitted for review (demo).');
+      break;
+    case 'copy-code':
+      var code = d.code;
+      if (navigator.clipboard && navigator.clipboard.writeText){
+        navigator.clipboard.writeText(code).then(function(){ toast('Code copied'); }).catch(function(){ toast('Copy is not available here. Code: '+code); });
+      } else toast('Copy is not available here. Code: '+code);
+      return;
+    case 'reset': S = fresh(); lastKey=''; lastOv=''; break;
+    default: return;
+  }
+  render();
+}
+document.addEventListener('click',function(e){
+  var el = e.target.closest('[data-act]');
+  if (!el) return;
+  act(el.getAttribute('data-act'), el.dataset);
+});
+document.addEventListener('input',function(e){
+  var id = e.target && e.target.id;
+  if (id && id.indexOf('f-')===0) S.form[id.slice(2)] = e.target.value;
+});
+document.addEventListener('keydown',function(e){
+  if (e.key!=='Escape') return;
+  if (S.sheet){ S.sheet=null; render(); }
+  else if (S.overlay){ S.overlay=null; render(); }
+});
+
+render();
+})();
+</script>
+
+</body></html>
